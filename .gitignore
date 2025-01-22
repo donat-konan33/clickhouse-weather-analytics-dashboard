@@ -1,4 +1,4 @@
-data/
 .venv
-.streamlit/
 .env
+data/*
+.streamlit/*
