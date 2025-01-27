@@ -13,13 +13,13 @@ class WeatherDatawarehouse:
         )
         self.db_client = self.init_connection(credentials=self.credentials)
 
-    @st.cache_resource
     def init_connection(self, credentials):
         """Create the datawarehouse connection using the right credentials
         Args:
             credentials
         Returns:
             Bigquery client connection object
+
         """
         # Create BIgQuery API client.
         client = bigquery.Client(credentials=credentials)
