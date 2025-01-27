@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from weatherdashboard.advanced.database import WeatherDatabase
+from weatherdashboard.functions.database import WeatherDatabase
 
 
 class WeatherQueries:

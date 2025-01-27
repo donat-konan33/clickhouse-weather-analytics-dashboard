@@ -1,5 +1,5 @@
 import streamlit as st
-from weatherdashboard.advanced.queries import WeatherQueries
+from weatherdashboard.functions.queries import WeatherQueries
 
 
 class WeatherState:

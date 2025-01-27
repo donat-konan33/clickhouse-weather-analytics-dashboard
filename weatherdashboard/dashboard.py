@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-class F1Dashboard:
+class WeatherDashboard:
     def __init__(self) -> None:
         pass
 
@@ -20,5 +20,5 @@ class F1Dashboard:
 
 
 if __name__ == "__main__":
-    dashboard = F1Dashboard()
+    dashboard = WeatherDashboard()
     dashboard.introduction_page()

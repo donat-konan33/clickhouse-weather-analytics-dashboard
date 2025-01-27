@@ -1,5 +1,5 @@
 import streamlit as st
-from advanced.queries import WeatherQueries
+from weatherdashboard.functions.queries import WeatherQueries
 
 
 class F1Cache:

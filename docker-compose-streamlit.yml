@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  streamlit:
+    build:
+      context: .
+    restart: always
+    volumes:
+      - ./.streamlit:/app/.streamlit/
+      - ./f1dashboard:/app/f1dashboard/
+    command: ["streamlit", "run", "f1dashboard/advanced.py"]
+    ports:
+      - 8501:8501
+    depends_on:
+      - database
+    stdin_open: true # eq. to -i in docker run (allows breakpoints)
+    tty: true # eq. to -t in docker run (allows breakpoints)

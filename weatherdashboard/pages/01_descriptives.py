@@ -4,10 +4,10 @@ to get the summary statistics of the tables in the database.
 """
 
 import streamlit as st
-from weatherdashboard.advanced.state import WeatherState
-from weatherdashboard.advanced.constants import WeatherConstants
-from weatherdashboard.advanced.database import WeatherDatabase
-from weatherdashboard.advanced.queries import WeatherQueries
+from weatherdashboard.functions.state import WeatherState
+from weatherdashboard.functions.constants import WeatherConstants
+from weatherdashboard.functions.database import WeatherDatabase
+from weatherdashboard.functions.queries import WeatherQueries
 
 
 class DescriptiveStatistics:
