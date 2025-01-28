@@ -6,7 +6,7 @@ to get the summary statistics of the tables in the database.
 import streamlit as st
 from weatherdashboard.functions.state import WeatherState
 from weatherdashboard.functions.constants import WeatherConstants
-from weatherdashboard.functions.database import WeatherDatabase
+from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.queries import WeatherQueries
 
 
@@ -14,17 +14,14 @@ class DescriptiveStatistics:
     def __init__(self) -> None:
         """Initialize the class"""
         self.weather_state = WeatherState()
-        self.weather_database = WeatherDatabase()
+        self.weather_database = WeatherDataWarehouse()
         self.weather_queries = WeatherQueries()
 
     def select_table(self):
-        """Select the table to explore"""
+        """Select the weather feature to explore"""
         with st.sidebar:
-            st.subheader("Select table to explore")
-            self.selected_table = "races"
-            # TODO: REPLACE THIS LINE ABOVE BY A "st.selectbox" using weatherConstants
-
-            self.selected_table = st.selectbox("Table name", WeatherConstants.table_names())
+            st.subheader("Select weather feature to explore")
+            self.selected_table = st.selectbox("feature name", WeatherConstants.feature())  or "default_value"
 
     def summary_statistics(self):
         """st.write summary statistics of the selected dable"""

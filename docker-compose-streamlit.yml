@@ -8,9 +8,12 @@ services:
     volumes:
       - ./.streamlit:/app/.streamlit/
       - ./weatherdashboard:/app/weatherdashboard/
+      - ./data:/app/data/
     command: ["streamlit", "run", "weatherdashboard/dashboard.py"]
+    env:
+      - PROJECT_ID=${PROJECT_ID}
+
     ports:
       - 8501:8501
-
     stdin_open: true
     tty: true

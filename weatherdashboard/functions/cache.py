@@ -2,7 +2,7 @@ import streamlit as st
 from weatherdashboard.functions.queries import WeatherQueries
 
 
-class F1Cache:
+class WeatherCache:
     def __init__(self) -> None:
         """Initialize the cache class"""
         self.weather_queries = WeatherQueries()
@@ -42,12 +42,7 @@ class F1Cache:
             st.info("Retrieved the data from cache")
             return self.get_data_from_cache(table_to_query)
         else:
-            st.info("Retrieved the data from the database")
-            # table_to_query is a string value that is mapped to
-            # a function in the WeatherQueries class. See the mapping
-            # under the __init__ method in the WeatherQueries class.
+            st.info("Retrieved the data from the GOOGLE BIGQUERY database")
             results = getattr(self.weather_queries, table_to_query)()
-
-            # Store the results in the cache
             self.store_in_cache(table_to_query, results)
             return results
