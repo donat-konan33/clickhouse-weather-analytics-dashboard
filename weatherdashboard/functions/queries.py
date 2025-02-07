@@ -13,7 +13,7 @@ class WeatherQueries:
 
     # # Perform query.
     # # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
-    @st.cache_data(ttl=600)
+    @st.cache_data(ttl=3600)
     def _run_query(_self, query):
         """
         Base utility method queries a database using pandas and returning a dataframe
@@ -35,16 +35,14 @@ class WeatherQueries:
     def get_mart_table(self, table_name):
         """
         Get a table from the mart dataset
-
         """
         query = f"""
                 SELECT *
-                FROM `{PROJECT_ID}.{self.datasets[3]}.{table_name}`
+                FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}`
                 """
         table_result = self._run_query(query=query)
 
         return table_result
-
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ import pandas as pd
 class WeatherState:
     def __init__(self) -> None:
         """Initialize the cache class"""
-        self.weather_queries = WeatherQueries()
+        self.queries = WeatherQueries()
 
     def generate_unique_key(self, method_name, *args):
         """Generate a unique cache key
@@ -43,7 +43,7 @@ class WeatherState:
             self.store_in_state(key, None)
         return st.session_state[key]
 
-    def get_query_result(self, weatherquery_method_to_call, *args):
+    def get_query_result(self, weatherquery_method_to_call:str, *args):
         """Get query result from state or the database. Store in state if new
 
         Args:
@@ -53,7 +53,6 @@ class WeatherState:
             pd.DataFrame: The results of the query
         """
         try:
-
             key = self.generate_unique_key(weatherquery_method_to_call, *args)
 
             if key in st.session_state:
@@ -61,7 +60,7 @@ class WeatherState:
                 return self.get_data_from_state(key)
             else:
                 st.info("Retrieve the data from the GOOGLE BIGQUERY database...")
-                results = getattr(self.weather_queries, weatherquery_method_to_call)(*args) # dynamic method call
+                results = getattr(self.queries, weatherquery_method_to_call)(*args) # dynamic method call
                 self.store_in_state(weatherquery_method_to_call, results)
                 return results
         except Exception as e:

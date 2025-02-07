@@ -5,22 +5,20 @@ import logging
 
 class WeatherDataWarehouse:
     def __init__(
-        _self,
+        self,
     ) -> None:
-        _self.db_client = _self.init_connection(
+        self.db_client = self.init_connection(
             credentials=service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"]
         )
-            )
+    )
 
-    #@st.cache_resource
-    def init_connection(_self, _credentials):
+    def init_connection(self, _credentials):
         """Create the datawarehouse connection using the right credentials
         Args:
             credentials
         Returns:
             Bigquery client connection object
-
         """
         # Create BIgQuery API client.
         client = bigquery.Client(credentials=_credentials)

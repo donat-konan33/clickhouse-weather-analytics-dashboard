@@ -17,8 +17,6 @@ class DataVisualizations:
         self.queries = WeatherQueries()
 
     # temperaure and feels like
-
-
     def temp_feels(self, ):
         """
         """
@@ -26,7 +24,7 @@ class DataVisualizations:
         pass
 
     # Precipitation and total
-    def precip_total():
+    def precip_total(self,):
         """
         """
 
@@ -34,7 +32,7 @@ class DataVisualizations:
 
 
     # wind , gust and pressure
-    def wind_gust_pressure():
+    def wind_gust_pressure(self,):
         """
         """
 
