@@ -4,16 +4,17 @@ from google.cloud import bigquery
 import logging
 
 class WeatherDataWarehouse:
-    def __init__(
-        self,
-    ) -> None:
+    def __init__(self) -> None:
+        """
+        """
         self.db_client = self.init_connection(
-            credentials=service_account.Credentials.from_service_account_info(
+            _credentials=service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"]
         )
     )
 
-    def init_connection(self, _credentials):
+    @st.cache_resource(ttl=3600)
+    def init_connection(_self, _credentials):
         """Create the datawarehouse connection using the right credentials
         Args:
             credentials

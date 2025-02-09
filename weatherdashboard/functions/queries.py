@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from weatherdashboard.functions.database import WeatherDatabase
+from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.constants import WeatherConstants
 import os
 
@@ -8,7 +8,7 @@ PROJECT_ID = os.environ.get("PROJECT_ID")
 
 class WeatherQueries:
     def __init__(self) -> None:
-        self.bq_client = WeatherDatabase().db_client
+        self.bq_client = WeatherDataWarehouse().db_client
         self.datasets = WeatherConstants.dataset()
 
     # # Perform query.
@@ -29,10 +29,10 @@ class WeatherQueries:
             Dataframe containing the result of the query
 
         """
+        bq_result_object = _self.bq_client.query(query)
+        return bq_result_object.to_dataframe()
 
-        return pd.read_sql_query(query, _self.bq_client)
-
-    def get_mart_table(self, table_name):
+    def get_data(self, table_name):
         """
         Get a table from the mart dataset
         """
@@ -41,9 +41,35 @@ class WeatherQueries:
                 FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}`
                 """
         table_result = self._run_query(query=query)
-
         return table_result
 
+    def get_temp_data(self, table_name, department):
+        """
+        Get temperature data like temp, fileslikemin, fileslikemax and feelslike
+        """
+        query = f"""
+                SELECT dates, weekday_name, department, temp, tempmin, tempmax, feelslike, feelslikemin, feelslikemax
+                from `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where department='{department}' order by dates
+                """
+        table_result = self._run_query(query=query)
+        return table_result
+
+
+    def get_solarenergy_geo_data_data(self, table_name, date):
+        """
+        """
+        query = f"""
+        SELECT dates, weekday_name, department, geo_point_2d, geo_shape, solarenergy_kwhpm2, solarradiation
+        from `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where dates = {date}
+        """
+        table_result = self._run_query(query=query)
+        return table_result
+
+
+    def get_department(self):
+        """
+        """
+        pass
 
 if __name__ == "__main__":
     queries = WeatherQueries()
