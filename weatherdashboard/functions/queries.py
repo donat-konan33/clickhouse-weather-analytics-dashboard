@@ -49,7 +49,7 @@ class WeatherQueries:
         """
         query = f"""
                 SELECT dates, weekday_name, department, temp, tempmin, tempmax, feelslike, feelslikemin, feelslikemax
-                from `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where department='{department}' order by dates
+                FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where department='{department}' order by dates
                 """
         table_result = self._run_query(query=query)
         return table_result
@@ -59,17 +59,28 @@ class WeatherQueries:
         """
         """
         query = f"""
-        SELECT dates, weekday_name, department, geo_point_2d, geo_shape, solarenergy_kwhpm2, solarradiation
-        from `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where dates = {date}
+        SELECT
+                dates, weekday_name, department, geo_point_2d,
+                ST_AsGeoJSON(geo_shape) AS geojson,
+                solarenergy_kwhpm2,
+                solarradiation
+        FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where dates = '{date}'
         """
         table_result = self._run_query(query=query)
         return table_result
 
 
-    def get_department(self):
+    def get_date(self):
         """
         """
-        pass
+        query = f"""
+        SELECT distinct(dates) AS dates
+        FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
+        ORDER BY dates
+        """
+        table_result = self._run_query(query=query)
+        table_result['date'] = table_result.dates.astype("str")
+        return table_result.date
 
 if __name__ == "__main__":
     queries = WeatherQueries()

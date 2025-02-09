@@ -20,6 +20,9 @@ google-cloud = "^0.34.0"
 google-cloud-bigquery = "3.21.0"
 db-dtypes = "^1.4.1"
 pandas-gbq = "0.13.2"
+folium = "0.18.0"
+streamlit-folium = "0.21.1"
+matplotlib = "3.7.5"
 
 
 [build-system]
