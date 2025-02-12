@@ -61,7 +61,7 @@ class WeatherQueries:
         query = f"""
         SELECT
                 dates, weekday_name, department, geo_point_2d,
-                ST_AsGeoJSON(geo_shape) AS geojson,
+                geojson,
                 solarenergy_kwhpm2,
                 solarradiation
         FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where dates = '{date}'
@@ -81,6 +81,51 @@ class WeatherQueries:
         table_result = self._run_query(query=query)
         table_result['date'] = table_result.dates.astype("str")
         return table_result.date
+
+
+    def get_tfptwgp(self, department):
+        """
+        Get some interesting features like tfptwgp as :
+        Temperature, Feels like, Pecipitation, Wind, Gust and Pressure
+        """
+
+        query = f"""
+                SELECT dates, department, reg_name, windspeed,
+                windgust, pressure, solarenergy_kwhpm2, temp, feelslike,
+                precip
+                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
+                WHERE department = '{department}'
+                ORDER BY dates
+                """
+        table_result = self._run_query(query=query)
+        return table_result
+
+    def get_sunshine_data(self):
+        """
+        Get some interesting features like tfptwgp as :
+        Temperature, Feels like, Pecipitation, Wind, Gust and Pressure
+        """
+
+        query = f"""
+                SELECT dates, reg_name, department, solarenergy_kwhpm2, solarradiation
+                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
+                ORDER BY dates
+                """
+        table_result = self._run_query(query=query)
+        return table_result
+
+    def get_region_sunshine_data(self, region):
+        """
+        """
+        query = f"""
+                SELECT department, reg_name, solarenergy_kwhpm2, solarradiation
+                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
+                WHERE reg_name = '{region}'
+                """
+        table_result = self._run_query(query=query)
+        return table_result
+
+
 
 if __name__ == "__main__":
     queries = WeatherQueries()

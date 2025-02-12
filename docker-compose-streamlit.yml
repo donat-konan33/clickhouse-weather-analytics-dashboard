@@ -12,6 +12,7 @@ services:
     command: ["streamlit", "run", "weatherdashboard/dashboard.py"]
     environment:
       - PROJECT_ID=$PROJECT_ID
+      - OPENAI_API_KEY=$OPENAI_API_KEY
 
     ports:
       - 8501:8501

@@ -42,3 +42,21 @@ class WeatherConstants:
                 'Yonne', "Côtes-d'Armor", 'Finistère', 'Ille-et-Vilaine',
                 'Morbihan', 'Rhône', 'Savoie', 'Haute-Savoie', 'Allier', 'Cantal',
                 ]
+    @staticmethod
+    def region():
+        """
+        """
+        return [
+                "Occitanie",
+                "Provence-Alpes-Côte d'Azur",
+                "Auvergne-Rhône-Alpes",
+                "Grand Est",
+                "Nouvelle-Aquitaine",
+                "Bourgogne-Franche-Comté",
+                "Hauts-de-France",
+                "Pays de la Loire",
+                "Centre-Val de Loire",
+                "Bretagne",
+                "Île-de-France",
+                "Normandie",
+            ]
