@@ -2,6 +2,8 @@
 With this page it will be interesting to request ai suggestions about the weather
 
 """
+import streamlit as st
+#st.set_page_config(layout="wide")
 import sys
 sys.path.append("/app")
 

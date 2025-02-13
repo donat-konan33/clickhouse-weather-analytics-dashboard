@@ -1,5 +1,7 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
+import requests
+from streamlit_js_eval import streamlit_js_eval
 from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.constants import WeatherConstants
 import os
@@ -48,7 +50,7 @@ class WeatherQueries:
         Get temperature data like temp, fileslikemin, fileslikemax and feelslike
         """
         query = f"""
-                SELECT dates, weekday_name, department, temp, tempmin, tempmax, feelslike, feelslikemin, feelslikemax
+                SELECT dates, weekday_name, department, temp, tempmin, tempmax, feelslike, feelslikemin, feelslikemax, descriptions, weekday_name
                 FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where department='{department}' order by dates
                 """
         table_result = self._run_query(query=query)
@@ -126,6 +128,31 @@ class WeatherQueries:
         return table_result
 
 
+    def get_location(self):
+        """
+        """
+
+        try:
+            user_location = streamlit_js_eval(js_expressions="navigator.geolocation.getCurrentPosition((pos) => pos.coords)", key="geo_position")
+            st.write(user_location)
+            if user_location:
+                latitude = user_location["latitude"]
+                longitude = user_location["longitude"]
+                st.write(f"lon={longitude}&lat={latitude}")
+                # search now the department
+                url = f"https://api-adresse.data.gouv.fr/reverse/?lon={longitude}&lat={latitude}"
+                response = requests.get(url).json()
+
+                if response.get("features"):
+                    department = response["features"][0]["properties"]["context"].split(", ")[1]
+                    st.write(f"📍 You are currently in **{department}** department")
+                    return department
+
+                else:
+                    st.error("Can't get department.")
+                    st.warning("Can't get your location. Please accept geolocation to continue.")
+        except Exception as e:
+            st.error(f"Error when retrieving location : {e}")
 
 if __name__ == "__main__":
     queries = WeatherQueries()

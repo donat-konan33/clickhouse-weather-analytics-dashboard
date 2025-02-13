@@ -2,11 +2,15 @@
 This page gives information to sunshine
 """
 
+import streamlit as st
+st.set_page_config(page_title="Weather Dashboard",
+                 layout="wide",
+                 page_icon="🌦️")
+
 import sys
 sys.path.append("/app")
 
 import altair as alt
-import streamlit as st
 import pandas as pd
 import folium
 import json

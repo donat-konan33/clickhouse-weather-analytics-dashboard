@@ -1,7 +1,11 @@
+import streamlit as st
+st.set_page_config(page_title="Weather Dashboard",
+                 layout="wide",
+                 page_icon="🌦️")
 import sys
 sys.path.append("/app")
 
-import streamlit as st
+
 
 class Forecast:
     pass

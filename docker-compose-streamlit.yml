@@ -9,7 +9,7 @@ services:
       - ./.streamlit:/app/.streamlit/
       - ./weatherdashboard:/app/weatherdashboard/
       - ./data:/app/data/
-    command: ["streamlit", "run", "weatherdashboard/dashboard.py"]
+    command: ["streamlit", "run", "weatherdashboard/00_dashboard_introduction.py"]
     environment:
       - PROJECT_ID=$PROJECT_ID
       - OPENAI_API_KEY=$OPENAI_API_KEY

@@ -36,12 +36,13 @@ class WeatherConstants:
                 'Moselle', 'Vosges', 'Bas-Rhin', 'Haut-Rhin', 'Oise', 'Somme',
                 'Pas-de-Calais', 'Nord', 'Meurthe-et-Moselle', 'Haute-Loire',
                 'Puy-de-Dôme', "Côte-d'Or", 'Nièvre', 'Saône-et-Loire',
-                'Martinique-France', 'Guyane-France', 'Mayotte', 'Corse', 'Aube',
-                'La Marne', 'Haute-Marne', 'Ardennes', 'Aisne', 'Doubs', 'Jura',
-                'Haute-Saône', 'Territoire de Belfort', 'Guadeloupe-France',
+                 'Aube', 'La Marne', 'Haute-Marne', 'Ardennes', 'Aisne', 'Doubs', 'Jura',
+                'Haute-Saône', 'Territoire de Belfort',
                 'Yonne', "Côtes-d'Armor", 'Finistère', 'Ille-et-Vilaine',
                 'Morbihan', 'Rhône', 'Savoie', 'Haute-Savoie', 'Allier', 'Cantal',
+                #'Mayotte', 'Corse', 'Guyane-France', 'Martinique-France', 'Guadeloupe-France',
                 ]
+
     @staticmethod
     def region():
         """

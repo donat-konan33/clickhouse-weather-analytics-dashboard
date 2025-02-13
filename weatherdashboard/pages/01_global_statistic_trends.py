@@ -3,11 +3,15 @@ The page with the descriptive statistics allows a user
 to get the summary statistics of the tables in the database.
 
 """
+import streamlit as st
+st.set_page_config(page_title="Weather Dashboard",
+                 layout="wide",
+                 page_icon="🌦️")
+
 import sys
 sys.path.append("/app")
 
 import altair as alt
-import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -17,34 +21,51 @@ from weatherdashboard.functions.queries import WeatherQueries
 from weatherdashboard.functions.state import WeatherState
 from weatherdashboard.functions.constants import WeatherConstants
 
+
+
 class DescriptiveStatistic:
     def __init__(self) -> None:
         self.bq_client = WeatherDataWarehouse().db_client
         self.state = WeatherState()
         self.queries = WeatherQueries()
-        self.constants = WeatherConstants
+
 
     # temperaure and feels like
-    def temperature(self):
+    def temperature(self, dep_option):
         """
         """
         table = "mart_newdata"
-        dep_option = st.selectbox("Select a department ", self.constants.department())
-        feature_option = st.selectbox("Select a temperature feature", self.constants.temp_feature())
+        #feature_option = st.selectbox("Select a temperature feature", self.constants.temp_feature())
         temp_data = self.state.get_query_result("get_temp_data", table, dep_option)
         temp_data['date'] = pd.to_datetime(temp_data.dates)
 
-        line_chart = (
-            alt.Chart(temp_data).mark_line().encode(y=feature_option, x="date")
-        )
-        st.altair_chart(line_chart, use_container_width=True)
+        fig = go.Figure()
 
+        # Adding lines for temperature data
+        fig.add_trace(go.Scatter(x=temp_data['date'], y=temp_data['temp'], mode='lines+markers', name='Temperature', line=dict(color='blue')))
+        fig.add_trace(go.Scatter(x=temp_data['date'], y=temp_data['tempmin'], mode='lines+markers', name='Temp Min', line=dict(color='green', dash='dash')))
+        fig.add_trace(go.Scatter(x=temp_data['date'], y=temp_data['tempmax'], mode='lines+markers', name='Temp Max', line=dict(color='red', dash='dash')))
+
+        # Adding lines for feels like data
+        fig.add_trace(go.Scatter(x=temp_data['date'], y=temp_data['feelslike'], mode='lines+markers', name='Feels Like', line=dict(color='purple')))
+        fig.add_trace(go.Scatter(x=temp_data['date'], y=temp_data['feelslikemin'], mode='lines+markers', name='Feels Like Min', line=dict(color='orange', dash='dash')))
+        fig.add_trace(go.Scatter(x=temp_data['date'], y=temp_data['feelslikemax'], mode='lines+markers', name='Feels Like Max', line=dict(color='brown', dash='dash')))
+
+        # Update the layout
+        fig.update_layout(
+            title="Temperature and Feels Like Over Time",
+            xaxis_title="Time of Day",
+            yaxis_title="Temperature (°C)",
+            template="plotly_dark",  # Optional: to give a dark theme
+            showlegend=True
+        )
+        st.plotly_chart(fig)
 
     # Precipitation and total
-    def wind_gust_pressure_precip_trend(self):
+    def wind_gust_pressure_precip_trend(self, pick_dep):
         """
         """
-        pick_dep = st.selectbox("Select a department", self.constants.department())
+
         data = self.state.get_query_result("get_tfptwgp", pick_dep)
         st.write("# 🔍 Data overview")
         st.dataframe(data)
@@ -78,5 +99,8 @@ if __name__ == "__main__":
 
     st.write("# ⛅Weather Data Visualizations")
     data_visualization = DescriptiveStatistic()
-    data_visualization.temperature()
-    data_visualization.wind_gust_pressure_precip_trend()
+    department = WeatherConstants.department()
+    dep_option = st.selectbox("Select a department", department)
+    if dep_option:
+        data_visualization.temperature(dep_option)
+        data_visualization.wind_gust_pressure_precip_trend(dep_option)
