@@ -2,3 +2,5 @@
 .env
 data/*
 .streamlit/*
+cache/
+pandasai.log
