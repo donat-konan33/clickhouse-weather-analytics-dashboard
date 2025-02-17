@@ -53,8 +53,8 @@ class DescriptiveStatistic:
 
         # Update the layout
         fig.update_layout(
-            title="Temperature and Feels Like Over Time",
-            xaxis_title="Time of Day",
+            title="Temperature and Feels Like Over Time 🌡",
+            xaxis_title="Days",
             yaxis_title="Temperature (°C)",
             template="plotly_dark",  # Optional: to give a dark theme
             showlegend=True
