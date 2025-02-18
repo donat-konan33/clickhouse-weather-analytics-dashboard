@@ -36,14 +36,13 @@ class SolarTrend:
         self.queries = WeatherQueries()
         self.constants = WeatherConstants()
 
+        self.table_name = "mart_newdata"
+        self.date = st.selectbox("Select one of the 7 next days", self.queries.get_date())
+        self.geo_data = self.state.get_query_result("get_solarenergy_geo_data_data", self.table_name, self.date)
 
-    def france_geo_map(self):
+    def france_dep_map(self):
         """
         """
-        table_name = "mart_newdata"
-        date = st.selectbox("Select one of the 7 next days", self.queries.get_date())
-        geo_data = self.state.get_query_result("get_solarenergy_geo_data_data", table_name, date)
-
         geojson_data = {
         "type": "FeatureCollection",
         "features": [
@@ -54,16 +53,16 @@ class SolarTrend:
                             "solaradiation": row["solarradiation"]
                             }
              }
-            for row in geo_data.to_dict("records")
+            for row in self.geo_data.to_dict("records")
         ]
     }
-        num_colors = 10
+        num_colors = 30
         cmap = cm.get_cmap('coolwarm', num_colors)
         colors = [mcolors.to_hex(cmap(i)) for i in range(num_colors)]
         colormap = LinearColormap(
                 colors=colors,
-                vmin=geo_data["solarenergy_kwhpm2"].min(),
-                vmax=geo_data["solarenergy_kwhpm2"].max(),
+                vmin=self.geo_data["solarenergy_kwhpm2"].min(),
+                vmax=self.geo_data["solarenergy_kwhpm2"].max(),
         )
         m = folium.Map(location=[46.603354, 1.888334], zoom_start=6)  # zoom on France centre
         folium.GeoJson(
@@ -83,7 +82,55 @@ class SolarTrend:
 
         # add color scale
         colormap.add_to(m)
-        st.write("Choropleth map of France Solar Energy (kWh/m²)")
+        st.write("Choropleth map of Solar Energy by department (kWh/m²)")
+        folium_static(m)
+
+
+    def france_reg_map(self):
+        """
+        """
+
+        geojson_data = {
+        "type": "FeatureCollection",
+        "features": [
+            {"type": "Feature",
+             "geometry": json.loads(row["geojson"]),
+             "properties": {"department": row["department"],
+                            "reg_name": row['reg_name'],
+                            "avg_solarenergy_kwhpm2": row["avg_solarenergy_kwhpm2"],
+                            "avg_solarradiation": row["avg_solarradiation"]
+                            }
+             }
+            for row in self.geo_data.to_dict("records")
+        ]
+    }
+        num_colors = 30
+        cmap = cm.get_cmap('coolwarm', num_colors)
+        colors = [mcolors.to_hex(cmap(i)) for i in range(num_colors)]
+        colormap = LinearColormap(
+                colors=colors,
+                vmin=self.geo_data["avg_solarenergy_kwhpm2"].min(),
+                vmax=self.geo_data["avg_solarenergy_kwhpm2"].max(),
+        )
+        m = folium.Map(location=[46.603354, 1.888334], zoom_start=6)  # zoom on France centre
+        folium.GeoJson(
+            geojson_data,
+            style_function=lambda feature: {
+                "fillColor": colormap(feature["properties"]["avg_solarenergy_kwhpm2"]),
+                "color": "black",  # boundary color
+                "weight": 1,
+                "fillOpacity": 0.7,
+            },
+            tooltip=folium.GeoJsonTooltip(
+                fields=["reg_name", "avg_solarenergy_kwhpm2", 'avg_solarradiation'],  # properties to display
+                aliases=["Region |", "Solar Energy (kWh/m²) |", "Solar Radiation (W/m²) |"],  # fields name
+                localize=True,
+            ),
+        ).add_to(m)
+
+        # add color scale
+        colormap.add_to(m)
+        st.write("Choropleth map of Solar Energy by region (kWh/m²)")
         folium_static(m)
 
 
@@ -109,11 +156,18 @@ class SolarTrend:
 if __name__ == "__main__":
     st.write("# 🌞Sunshine Data")
     data_visualizations = SolarTrend()
+    st.dataframe(data_visualizations.geo_data)
 
-    st.subheader("Chorpleth Map of Solar Energy values (France Metro)")
-    data_visualizations.france_geo_map()
+    col1, col2 = st.columns([2, 2])
+    with st.subheader("Chorpleth Map of Solar Energy of (France Metro)"):
+        with col1:
+            with st.container(border=True):
+                data_visualizations.france_dep_map()
 
-    col1, col2 = st.columns(2)
+        with col2:
+            with st.container(border=True):
+                data_visualizations.france_reg_map()
+
 
     st.subheader("Violin Plot")
     data_visualizations.violin_plot()

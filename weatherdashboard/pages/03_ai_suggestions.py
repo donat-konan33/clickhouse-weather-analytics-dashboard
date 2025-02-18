@@ -14,12 +14,18 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+from pandasai.llm.local_llm import LocalLLM
+from pandasai import SmartDataframe
+
 from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.queries import WeatherQueries
 from weatherdashboard.functions.state import WeatherState
 from weatherdashboard.functions.constants import WeatherConstants
 
 ai.api_key = os.environ["OPENAI_API_KEY"]
+
+# ---------  add login credentials -------- #
+
 
 class AiPrompt:
     def __init__(self):
@@ -36,20 +42,22 @@ class AiPrompt:
         col1, col2 = st.columns([2, 5])
         with col1:
             pick_dep = st.selectbox("Select a department... ", self.constants.department())
+            data = self.state.get_query_result("get_tfptwgp", pick_dep)
         with col2:
-            text_input = st.text_input("Hit the features of your Solar panel")
-
-        data = self.state.get_query_result("get_tfptwgp", pick_dep)
+            prompt = st.text_input("Hit the features of your Solar panel")
+            # --- llm call
+            model = LocalLLM(
+                        api_base="http://host.docker.internal:11434/v1",
+                        model="llama3"
+                    )
+            if data:
+                df=SmartDataframe(data,config={"llm":model})
+                if st.button("Generate"):
+                    if prompt:
+                        with st.spinner("Generating response..."):
+                            st.write(df.chat(prompt))
         st.dataframe(data)
 
-        # --- openai call
-
-
-
-    def prompt(self):
-        """
-        """
-        pass
 
 if __name__ == '__main__':
     suggestions = AiPrompt()

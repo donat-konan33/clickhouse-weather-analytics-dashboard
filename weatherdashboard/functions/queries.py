@@ -65,7 +65,11 @@ class WeatherQueries:
                 dates, weekday_name, department, geo_point_2d,
                 geojson,
                 solarenergy_kwhpm2,
-                solarradiation
+                solarradiation,
+                reg_name,
+                avg_solarenergy_kwhpm2,
+                avg_solarradiation
+
         FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where dates = '{date}'
         """
         table_result = self._run_query(query=query)
@@ -153,6 +157,8 @@ class WeatherQueries:
                     st.warning("Can't get your location. Please accept geolocation to continue.")
         except Exception as e:
             st.error(f"Error when retrieving location : {e}")
+
+
 
 if __name__ == "__main__":
     queries = WeatherQueries()

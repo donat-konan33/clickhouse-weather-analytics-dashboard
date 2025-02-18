@@ -20,9 +20,9 @@ class WeatherConstants:
         """
         list od departments
         """
-        return ['Ain', 'Ardèche', 'Drôme', 'Isère', 'Loire-Authion', 'Lozère',
+        return ['Ain', 'Ardèche', 'Drôme', 'Isère', 'Loire', 'Lozère',
                 'Pyrénées-Orientales', 'Corrèze', 'Creuse', 'Haute-Vienne',
-                'Yvelines', 'Essonne', 'Hauts-de-Seine', 'Saint-Denis',
+                'Yvelines', 'Essonne', 'Hauts-de-Seine', 'Seine-Saint-Denis',
                 'Val-de-Marne', "Val-d'Oise", 'Seine-et-Marne', 'Paris',
                 'Seine-Maritime', 'Eure', 'Calvados', 'Manche', 'Orne', 'Sarthe',
                 'Mayenne', 'Charente', 'Charente-Maritime', 'Dordogne', 'Gironde',
@@ -36,11 +36,11 @@ class WeatherConstants:
                 'Moselle', 'Vosges', 'Bas-Rhin', 'Haut-Rhin', 'Oise', 'Somme',
                 'Pas-de-Calais', 'Nord', 'Meurthe-et-Moselle', 'Haute-Loire',
                 'Puy-de-Dôme', "Côte-d'Or", 'Nièvre', 'Saône-et-Loire',
-                 'Aube', 'La Marne', 'Haute-Marne', 'Ardennes', 'Aisne', 'Doubs', 'Jura',
+                 'Aube', 'Marne', 'Haute-Marne', 'Ardennes', 'Aisne', 'Doubs', 'Jura',
                 'Haute-Saône', 'Territoire de Belfort',
                 'Yonne', "Côtes-d'Armor", 'Finistère', 'Ille-et-Vilaine',
-                'Morbihan', 'Rhône', 'Savoie', 'Haute-Savoie', 'Allier', 'Cantal',
-                #'Mayotte', 'Corse', 'Guyane-France', 'Martinique-France', 'Guadeloupe-France',
+                'Morbihan', 'Rhône', 'Savoie', 'Haute-Savoie', 'Allier', 'Cantal', 'Corse',
+                #'Mayotte',  'Guyane-France', 'Martinique-France', 'Guadeloupe-France',
                 ]
 
     @staticmethod
