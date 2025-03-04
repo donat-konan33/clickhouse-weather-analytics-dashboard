@@ -131,6 +131,23 @@ class WeatherQueries:
         table_result = self._run_query(query=query)
         return table_result
 
+    def get_solarenergy_agg_pday(self, department):
+        """
+        We take into account the calculation over 8 days as recorded
+        Panel area = 2.7 m²
+        Panel efficiency = 21.7%
+        """
+        query = f"""
+                SELECT department,
+                AVG(solarenergy_kwhpm2) AS solarenergy_kwhpm2,
+                AVG(solarenergy_kwhpm2) * 2.7 AS available_solarenergy_kwhc,
+                AVG(solarenergy_kwhpm2) * 2.7 * 0.217 AS real_production_kwhpday
+                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
+                WHERE department= '{department}'
+                GROUP BY department
+                """
+        table_result = self._run_query(query=query)
+        return table_result
 
     def get_location(self):
         """
