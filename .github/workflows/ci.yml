@@ -55,7 +55,9 @@ jobs:
 
       - name: Recreate secrets.toml file
         run: |
-          echo $STREAMLIT_SECRETS_TOML > .streamlit/secrets.toml
+          echo "$STREAMLIT_SECRETS_TOML"
+          echo $STREAMLIT_SECRETS_TOML
+          echo "$STREAMLIT_SECRETS_TOML" > .streamlit/secrets.toml
 
       - name: Install dependencies
         run: |
