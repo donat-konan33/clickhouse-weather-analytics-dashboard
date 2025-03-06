@@ -84,4 +84,7 @@ jobs:
 
       - name: Mark CI as successful
         if: success()
-        run: echo "CI Passed!" > ci_success.txt && git add ci_success.txt && git commit -m "CI Passed" && git push
+        run: |
+          git config user.email "donatien.konan.pro@gmail.com"
+          git config user.name "donatien konan"
+          echo "CI Passed!" > ci_success.txt && git add ci_success.txt && git commit -m "CI Passed" && git push
