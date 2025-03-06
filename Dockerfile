@@ -12,7 +12,7 @@ COPY ./weatherdashboard  ./weatherdashboard
 
 RUN apt-get update \
     && apt-get -y upgrade \
-    && pip3 install --no-cache-dir poetry \
+    && pip3 install --no-cache-dir poetry==2.0.1 \
     && poetry install --only main \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
