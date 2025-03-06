@@ -6,11 +6,11 @@ test_connection:
 
 build:
 	@echo "Building docker image..."
-	@docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
+	@docker build -t $(IMAGE_NAME) .
 
 # Tag Image
 tag:
-	@docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(IMAGE_FULL_TAG)
+	@docker tag $(IMAGE_NAME) $(IMAGE_FULL_TAG)
 
 # Push Image to Artifact Registry
 push: tag

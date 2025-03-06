@@ -70,7 +70,7 @@ jobs:
               -e PORT=$PORT \
               -e OPENROUTER_API_KEY=$OPENROUTER_API_KEY \
               -e PROJECT_ID=$PROJECT_ID \
-              $IMAGE_NAME:$IMAGE_TAG
+              docker.io/library/$IMAGE_NAME
 
       - name: Wait for Streamlit app to start
         run: sleep 10
