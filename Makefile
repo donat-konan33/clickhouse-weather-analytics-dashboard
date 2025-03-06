@@ -6,16 +6,16 @@ test_connection:
 
 build:
 	@echo "Building docker image..."
-	@docker build -t $(IMAGE_NAME) .
+	@docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
 
 # Tag Image
 tag:
-	@docker tag $(IMAGE_NAME) $(IMAGE_FULL_TAG)
+	@docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(IMAGE_FULL_TAG)
 
 # Push Image to Artifact Registry
 push: tag
 	@echo "Pushing docker image..."
-	docker push $(IMAGE_FULL_TAG)
+	@docker push $(IMAGE_FULL_TAG)
 
 # Deploy image to Cloud Run
 deploy:

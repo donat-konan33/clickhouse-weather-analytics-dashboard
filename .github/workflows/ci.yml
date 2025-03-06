@@ -65,19 +65,12 @@ jobs:
       - name: Build Docker image
         run: make build
 
-      - name: Debug environment variables
-        run: |
-          echo "PORT: $PORT"
-          echo "OPENROUTER_API_KEY: $OPENROUTER_API_KEY"
-          echo "PROJECT_ID: $PROJECT_ID"
-          echo "IMAGE_NAME: $IMAGE_NAME"
-
       - name: Run Docker container
         run: docker run --name test_streamlit_container -d -p $PORT:$PORT \
               -e PORT=$PORT \
               -e OPENROUTER_API_KEY=$OPENROUTER_API_KEY \
               -e PROJECT_ID=$PROJECT_ID \
-              $IMAGE_NAME
+              $IMAGE_NAME:$IMAGE_TAG
 
       - name: Wait for Streamlit app to start
         run: sleep 10
@@ -86,7 +79,7 @@ jobs:
         run: curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT/ | grep 200
 
       - name: Save Docker image
-        run: docker save $IMAGE_NAME:latest > $IMAGE_NAME.tar
+        run: docker save $IMAGE_NAME:$IMAGE_TAG > $IMAGE_NAME.tar
 
       - name: Mark CI as successful
         if: success()

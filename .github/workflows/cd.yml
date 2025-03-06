@@ -7,7 +7,6 @@ on:
     types:
       - completed
 
-
 jobs:
   check-ci:
     runs-on: ubuntu-latest
@@ -38,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Artifact
-          path: $IMAGE_NAME.tar
+          path: ${{ vars.IMAGE_NAME }}.tar
 
       - name: Load Docker image
         run: docker load < $IMAGE_NAME.tar
@@ -57,7 +56,7 @@ jobs:
 
       - name: Tag Image and push to GAR repository
         run: |
-          export IMAGE_FULL_TAG = $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
+          export IMAGE_FULL_TAG=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
           make tag push
 
       - name: Deploy to Prod
