@@ -17,7 +17,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8501
+EXPOSE $PORT
 
 ENTRYPOINT [ "poetry", "run" ]
-CMD ["streamlit", "run", "weatherdashboard/00_dashboard_introduction.py", "--host", "0.0.0.0", "--port", "${PORT}"]
+CMD ["streamlit", "run", "weatherdashboard/00_dashboard_introduction.py"]
