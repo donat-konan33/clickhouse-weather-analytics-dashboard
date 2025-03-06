@@ -92,7 +92,7 @@ class WeatherDashboard:
                 On ``ai suggestions`` page, you will hit/select your department name : \n
                 👉 Our AI could give you more quick informations about solar trends which could give you a lot of ideas.
 
-                Time series forecast is being built and will comes soon ⏰.
+                `Time Series` forecast is being built and will come soon ⏰.
 
                 """
                 )
@@ -117,7 +117,7 @@ class WeatherDashboard:
                             self.display_info(info_dict)
 
             except Exception as e:
-                st.write(f"""⚠️ ``Something was wrong !! Can't display the day weather info !``\n
+                st.write(f"""⚠️ ``Something were wrong !! Can't display the day weather info ! ``\n
                          {e}""")
 
 

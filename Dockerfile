@@ -20,3 +20,4 @@ RUN apt-get update \
 EXPOSE 8501
 
 ENTRYPOINT [ "poetry", "run" ]
+CMD ["streamlit", "run", "weatherdashboard/00_dashboard_introduction.py", "--host", "0.0.0.0", "--port", "${PORT}"]

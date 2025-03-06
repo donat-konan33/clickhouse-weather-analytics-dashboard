@@ -1,0 +1,70 @@
+# based on this doc https://gist.github.com/palewire/12c4b2b974ef735d22da7493cf7f4d37
+name: Deploy to Prod
+
+on:
+  workflow_run:
+    workflows: ["Continuous Integration Pipeline"]
+    types:
+      - completed
+
+
+jobs:
+  check-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for CI validation
+        run: |
+          if ! git log -1 --pretty=%B | grep -q "CI Passed"; then
+            echo "CI has not passed, stopping deployment!"
+            exit 1
+          fi
+
+  deploy:
+    needs: check-ci  # check out ci status
+    runs-on: ubuntu-latest
+    env:
+      LOCATION: "${{ secrets.LOCATION }}"
+      REPOSITORY: "${{ vars.REPOSITORY }}"
+      IMAGE_NAME:  "${{ vars.IMAGE_NAME }}"
+      IMAGE_TAG: "${{ vars.IMAGE_TAG }}"
+      PROJECT_ID: "${{ secrets.PROJECT_ID }}"
+
+    steps:
+
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifact
+          path: $IMAGE_NAME.tar
+
+      - name: Load Docker image
+        run: docker load < $IMAGE_NAME.tar
+
+      - name: Authenticate with Google Cloud Platform
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Login to Google Artifact Registry
+        run: gcloud auth configure-docker $LOCATION-docker.pkg.dev
+
+      - name: Tag Image and push to GAR repository
+        run: |
+          export IMAGE_FULL_TAG = $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
+          make tag push
+
+      - name: Deploy to Prod
+        run: |
+          make deploy
+        env:
+          # Setting an environment variable to the container
+          OPENROUTER_API_KEY: "${{ secrets.OPENROUTER_API_KEY }}"
+          PROJECT_ID: "${{ secrets.PROJECT_ID }}"
+          PORT: "${{ secrets.PORT }}"

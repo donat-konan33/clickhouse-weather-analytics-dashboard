@@ -22,11 +22,9 @@ import matplotlib.colors as mcolors
 import plotly.express as px
 import plotly.graph_objects as go
 
-from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.queries import WeatherQueries
 from weatherdashboard.functions.state import WeatherState
 from weatherdashboard.functions.constants import WeatherConstants
-
 
 
 class SolarTrend:
@@ -159,7 +157,7 @@ if __name__ == "__main__":
     st.dataframe(data_visualizations.geo_data)
 
     col1, col2 = st.columns([2, 2])
-    with st.subheader("Chorpleth Map of Solar Energy of (France Metro)"):
+    with st.subheader("Choropleth Map of Solar Energy of (France Metro)"):
         with col1:
             with st.container(border=True):
                 data_visualizations.france_dep_map()

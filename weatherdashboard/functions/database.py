@@ -12,6 +12,7 @@ class WeatherDataWarehouse:
             st.secrets["gcp_service_account"]
         )
     )
+        logging.info("Big Query client successfully created")
 
     @st.cache_resource(ttl=3600)
     def init_connection(_self, _credentials):
@@ -23,6 +24,4 @@ class WeatherDataWarehouse:
         """
         # Create BIgQuery API client.
         client = bigquery.Client(credentials=_credentials)
-        logging.info("Big Query client successfully created")
-
         return client

@@ -15,13 +15,10 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-#import pandasai
-#from pandasai import SmartDataframe
 from openai import OpenAI
 import requests
 import json
 
-from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.queries import WeatherQueries
 from weatherdashboard.functions.state import WeatherState
 from weatherdashboard.functions.constants import WeatherConstants
@@ -81,8 +78,9 @@ class AgentSunAI:
             #prompt = st.text_input("Hit the features of your Solar panel")
             if data_dict is not None:
                     if st.button("Generate AgentSunAI suggestions"):
+
                         try:
-                            with st.spinner("Please let AgentSunAI a few time to provide consumption suggestion... "):
+                            with st.spinner("Please let AgentSunAI a few time (40-60s) to provide consumption suggestion... "):
                                 completion = client.chat.completions.create(
                                             model="deepseek/deepseek-r1:free",
                                             messages=[
@@ -109,11 +107,14 @@ class AgentSunAI:
 
                                 )
                                 ai_answer = st.write(completion.choices[0].message.content) #.message.content or .reasoning
-                                if ai_answer:
+                                if ai_answer == None:
+                                    st.write("Something went wrong, Let retry for a second time 🏋️‍♂️You surely get a suggestion table !")
+                                else :
                                    text = """
                                         ----------------------------------------------------------
                                         The real electrical production from Solar Panel is based on a specific one studied previously in an article.
                                         You can check it out via this [link]()
+                                        Note: We use a free model so generation could take a little bit time to give you answer.
                                           """
                                    st.markdown(text)
                         except Exception as e:
