@@ -3,6 +3,7 @@ FROM python:3.9.20-slim
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
 
 WORKDIR /app
 
@@ -20,4 +21,4 @@ RUN apt-get update \
 EXPOSE $PORT
 
 ENTRYPOINT [ "poetry", "run" ]
-CMD ["streamlit", "run", "weatherdashboard/00_dashboard_introduction.py"]
+CMD ["sh", "-c", "streamlit run weatherdashboard/00_dashboard_introduction.py --server.port=$PORT --server.address=0.0.0.0"]
