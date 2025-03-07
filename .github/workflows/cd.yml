@@ -8,31 +8,9 @@ on:
       - completed
 
 jobs:
-  check-ci:
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read # allow reading ci ci-success artifact
-
-    steps:
-      - name: Download CI status artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ci-success
-          path: ./artifact
-
-      - name: Check for CI validation
-        run: |
-          if ! grep -q "CI Passed!" ci_success.txt; then
-            echo "CI has not passed, stopping deployment!"
-            exit 1
-          fi
-
   deploy:
-    needs: check-ci  # check out ci status
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    permissions:
-      actions: read # allow reading ci docker-image artifact
-
     env:
       LOCATION: "${{ secrets.LOCATION }}"
       REPOSITORY: "${{ vars.REPOSITORY }}"
@@ -41,23 +19,14 @@ jobs:
       PROJECT_ID: "${{ secrets.PROJECT_ID }}"
 
     steps:
-      - name: Download Docker image artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-image
-          path: ./artifact
-
-      - name: Verify downloaded artifact
-        run: ls -lah
-
-      - name: Load Docker image
-        run: docker load < $(find . -name "*.tar")
+      - name: clone repository into working directory
+        uses: actions/checkout@v3
 
       - name: Authenticate with Google Cloud Platform
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT }}"
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -65,13 +34,15 @@ jobs:
       - name: Login to Google Artifact Registry
         run: gcloud auth configure-docker $LOCATION-docker.pkg.dev
 
-      - name: Tag Image and push to GAR repository
+      - name: Pull artifact from repository
         run: |
+          echo "Artifact Pulling ongoing ..."
           export IMAGE_FULL_TAG=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
-          make tag push
+          docker pull IMAGE_FULL_TAG
 
       - name: Deploy to Prod
-        run: |
+        run: | # for command make have a look to makefile file
+          echo "Deployment in progress..."
           make deploy
         env:
           # Setting an environment variable to the container

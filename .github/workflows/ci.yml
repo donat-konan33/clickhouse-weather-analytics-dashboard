@@ -35,6 +35,7 @@ jobs:
       OPENROUTER_API_KEY: "${{ secrets.OPENROUTER_API_KEY }}"
       STREAMLIT_SECRETS_TOML: "${{ secrets.STREAMLIT_SECRETS_TOML }}"
       PORT: "${{ secrets.PORT }}"
+      PROJECT_ID: "${{ secrets.PROJECT_ID }}"
 
     steps:
 
@@ -63,7 +64,7 @@ jobs:
         run: make test_connection
 
       - name: Build Docker image
-        run: make build
+        run: make build # for command make have a look to makefile file
 
       - name: Run Docker container
         run: |
@@ -89,17 +90,19 @@ jobs:
           path: ${{ vars.IMAGE_NAME }}.tar
           retention-days: 2
 
-      - name:  Save CI status
-        env:
-          GITHUB_TOKEN: "${{ secrets.GH_TOKEN_PAT }}"
-
-        if: success()
-        run: |
-          echo "CI Passed!" > ci_success.txt
-
-      - name: Upload CI status as artifact
-        uses: actions/upload-artifact@v4
+      - name: Authenticate with Google Cloud Platform
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          name: ci-success
-          path: ci_success.txt
-          retention-days: 2
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Login to Google Artifact Registry
+        run: gcloud auth configure-docker $LOCATION-docker.pkg.dev
+
+      - name: Tag the Docker image and push to Google Artifact Registry
+        run: | # for command make have a look to makefile file
+          export IMAGE_FULL_TAG=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
+          make tag push
