@@ -24,7 +24,7 @@ deploy:
 		--image=${IMAGE_FULL_TAG} \
 		--region=$(LOCATION) \
 		--set-env-vars "PROJECT_ID=$(PROJECT_ID)" \
-		--set-env-vars "OPENROUTER_API_KEY=$(OPENROUTER_API_KEY)"
+		--set-env-vars "OPENROUTER_API_KEY=$(OPENROUTER_API_KEY)" \
 		--set-env-vars "PORT=$(PORT)"
 
 # Clean Local Image
