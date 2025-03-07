@@ -7,7 +7,7 @@ ENV PORT=8080
 
 WORKDIR /app
 
-COPY ./streamlit ./streamlit
+COPY ./.streamlit ./.streamlit
 COPY ./pyproject.toml  ./pyproject.toml
 COPY ./poetry.lock  ./poetry.lock
 COPY ./weatherdashboard  ./weatherdashboard
