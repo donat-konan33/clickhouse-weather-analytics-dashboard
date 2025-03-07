@@ -80,16 +80,6 @@ jobs:
       - name: Test streamlit app
         run: curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT/ | grep 200
 
-      - name: Save Docker image
-        run: docker save $IMAGE_NAME:$IMAGE_TAG > $IMAGE_NAME.tar
-
-      - name: Upload Docker image as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-image
-          path: ${{ vars.IMAGE_NAME }}.tar
-          retention-days: 2
-
       - name: Authenticate with Google Cloud Platform
         id: auth
         uses: google-github-actions/auth@v2
