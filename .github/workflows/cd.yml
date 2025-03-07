@@ -10,6 +10,9 @@ on:
 jobs:
   check-ci:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read # allow reading ci ci-success artifact
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,7 +24,7 @@ jobs:
 
       - name: Check for CI validation
         run: |
-          if ! git ls-remote --tags origin | grep -q "ci-passed"; then
+          if ! grep -q "CI Passed!" ci_success.txt; then
             echo "CI has not passed, stopping deployment!"
             exit 1
           fi
@@ -29,6 +32,9 @@ jobs:
   deploy:
     needs: check-ci  # check out ci status
     runs-on: ubuntu-latest
+    permissions:
+      actions: read # allow reading ci docker-image artifact
+
     env:
       LOCATION: "${{ secrets.LOCATION }}"
       REPOSITORY: "${{ vars.REPOSITORY }}"
@@ -41,8 +47,7 @@ jobs:
       - name: Download Docker image artifact
         uses: actions/download-artifact@v4
         with:
-          name: Artifact
-          path: .
+          name: docker-image
 
       - name: Verify downloaded artifact
         run: ls -lah
