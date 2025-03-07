@@ -86,7 +86,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: docker-image
-          path: $IMAGE_NAME.tar
+          path: ${{ vars.IMAGE_NAME }}.tar
           retention-days: 2
 
       - name:  Save CI status
