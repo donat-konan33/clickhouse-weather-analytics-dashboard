@@ -43,7 +43,9 @@ jobs:
       - name: Deploy to Prod
         run: | # for command make have a look to makefile file
           echo "Deployment in progress..."
+          export IMAGE_FULL_TAG=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
           make deploy
+
         env:
           # Setting an environment variable to the container
           OPENROUTER_API_KEY: "${{ secrets.OPENROUTER_API_KEY }}"
