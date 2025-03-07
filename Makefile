@@ -22,8 +22,10 @@ deploy:
 	@echo "Deploying weather-photovoltaic-app..."
 	@gcloud run deploy weather-photovoltaic-app \
 		--image=${IMAGE_FULL_TAG} \
-		--region=$(LOCATION)
-		--set-env-vars "PROJECT_ID=$(PROJECT_ID), OPENROUTER_API_KEY=$(OPENROUTER_API_KEY), PORT=$(PORT)"
+		--region=$(LOCATION) \
+		--set-env-vars "PROJECT_ID=$(PROJECT_ID)" \
+		--set-env-vars "OPENROUTER_API_KEY=$(OPENROUTER_API_KEY)"
+		--set-env-vars "PORT=$(PORT)"
 
 # Clean Local Image
 clean:
