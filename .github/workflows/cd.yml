@@ -33,14 +33,17 @@ jobs:
 
     steps:
 
-      - name: Upload Docker image as artifact
-        uses: actions/upload-artifact@v4
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
         with:
           name: Artifact
-          path: ${{ vars.IMAGE_NAME }}.tar
+          path: .
+
+      - name: Verify downloaded artifact
+        run: ls -lah
 
       - name: Load Docker image
-        run: docker load < $IMAGE_NAME.tar
+        run: docker load < $(find . -name "*.tar")
 
       - name: Authenticate with Google Cloud Platform
         id: auth
