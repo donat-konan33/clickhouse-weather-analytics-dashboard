@@ -14,9 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Download CI status artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-success
+
       - name: Check for CI validation
         run: |
-          if ! git log -1 --pretty=%B | grep -q "CI Passed"; then
+          if ! git ls-remote --tags origin | grep -q "ci-passed"; then
             echo "CI has not passed, stopping deployment!"
             exit 1
           fi

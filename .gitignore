@@ -4,3 +4,4 @@ data/*
 .streamlit/*
 cache/
 pandasai.log
+ci_success.txt

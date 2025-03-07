@@ -82,15 +82,16 @@ jobs:
       - name: Save Docker image
         run: docker save $IMAGE_NAME:$IMAGE_TAG > $IMAGE_NAME.tar
 
-      - name: Mark CI as successful
+      - name:  Save CI status
         env:
           GITHUB_TOKEN: "${{ secrets.GH_TOKEN_PAT }}"
 
         if: success()
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
           echo "CI Passed!" > ci_success.txt
-          git add ci_success.txt
-          git commit -m "CI Passed"
-          git push origin master
+
+      - name: Upload CI status as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-success
+          path: ci_success.txt
