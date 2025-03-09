@@ -60,7 +60,7 @@ jobs:
 
       - name: Enable required Serverless VPC Access API
         run: |
-          gcloud services list --format="value(name) | grep "^vpcaccess.googleapis.com$" || \
+          gcloud services list --format="value(name)" | grep "^vpcaccess.googleapis.com$" || \
           gcloud services enable vpcaccess.googleapis.com
 
       - name: Create VPC Serverless Connector
