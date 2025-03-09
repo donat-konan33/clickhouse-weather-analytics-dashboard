@@ -59,9 +59,16 @@ jobs:
               --nat-all-subnet-ip-ranges
 
       - name: Enable required Serverless VPC Access API
-        run: |
+        run: | # wait a few minutes for the action to propagate to our systems with sleep 120
           gcloud services list --format="value(name)" | grep "^vpcaccess.googleapis.com$" || \
           gcloud services enable vpcaccess.googleapis.com
+
+          echo "Checkout vpcaccess.googleapis.com API ..."
+          while ! gcloud services list --format="value(name)" | grep -q "^vpcaccess.googleapis.com$"; do
+            echo "Waiting of api activating..."
+            sleep 10
+          done
+          echo "API vpcaccess.googleapis.com successfully enabled  !"
 
       - name: Create VPC Serverless Connector
         run: |
