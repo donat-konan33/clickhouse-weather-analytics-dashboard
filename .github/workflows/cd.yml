@@ -42,12 +42,12 @@ jobs:
 
       - name: Configure Network (VPC, Router, NAT)
         run: |
-          # checkout and create VPC if default VPC do not exist
+          #checkout and create VPC if default VPC do not exist
           gcloud compute networks list --format="value(name)" | grep "^default$" || \
           gcloud compute networks create default --subnet-mode=auto
 
           # checkout and create router if not exist
-          gcloud compute routers list --format="value(name)" --region=$LOCATION | grep "^cloud-run-router$" || \
+          gcloud compute routers list --format="value(name)" --regions=$LOCATION | grep "^cloud-run-router$" || \
           gcloud compute routers create cloud-run-router --network=default --region=$LOCATION
 
           # checkout and create NAT if not exist (allowed internet access to the cloud run app)
@@ -57,6 +57,11 @@ jobs:
               --region=$LOCATION \
               --auto-allocate-nat-external-ips \
               --nat-all-subnet-ip-ranges
+
+      - name: Enable required Serverless VPC Access API
+        run: |
+          gcloud services list --format="value(name) | grep "^vpcaccess.googleapis.com$" || \
+          gcloud services enable vpcaccess.googleapis.com
 
       - name: Create VPC Serverless Connector
         run: |
