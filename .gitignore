@@ -5,3 +5,4 @@ data/*
 cache/
 pandasai.log
 ci_success.txt
+.vscode/

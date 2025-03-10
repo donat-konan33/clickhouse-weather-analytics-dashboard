@@ -108,7 +108,7 @@ class AgentSunAI:
                                 )
                                 ai_answer = st.write(completion.choices[0].message.content) #.message.content or .reasoning
                                 if ai_answer == None:
-                                    st.write("Something went wrong, Let retry for a second time 🏋️‍♂️You surely get a suggestion table !")
+                                    st.write("Something went wrong, Let retry for a second time 🏋️‍♂️You will surely get a suggestion table !")
                                 else :
                                    text = """
                                         ----------------------------------------------------------
