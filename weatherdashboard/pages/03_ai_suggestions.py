@@ -38,10 +38,9 @@ class AgentSunAI:
         which machine could consume the location corresponding to weekly solar energy recorded in the database
         """
 
-
         client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
-                api_key=OPENROUTER_API_KEY
+                api_key=str(OPENROUTER_API_KEY)
         )
 
         col1, col2 = st.columns([3, 5])
@@ -78,9 +77,8 @@ class AgentSunAI:
             #prompt = st.text_input("Hit the features of your Solar panel")
             if data_dict is not None:
                     if st.button("Generate AgentSunAI suggestions"):
-
                         try:
-                            with st.spinner("Please let AgentSunAI a few time (40-60s) to provide consumption suggestion... "):
+                            with st.spinner("Please let AgentSunAI a few time (40-60s) to provide consumption suggestion... You should retry if no result"):
                                 completion = client.chat.completions.create(
                                             model="deepseek/deepseek-r1:free",
                                             messages=[
@@ -106,24 +104,26 @@ class AgentSunAI:
                                             temperature=0
 
                                 )
-                                ai_answer = st.write(completion.choices[0].message.content) #.message.content or .reasoning
-                                if ai_answer == None:
-                                    st.write("Something went wrong, Let retry for a second time 🏋️‍♂️You will surely get a suggestion table !")
-                                else :
-                                   text = """
-                                        ----------------------------------------------------------
-                                        The real electrical production from Solar Panel is based on a specific one studied previously in an article.
-                                        You can check it out via this [link]()
-                                        Note: We use a free model so generation could take a little bit time to give you answer.
-                                          """
-                                   st.markdown(text)
+                                response = completion.choices[0].message.content
+                                st.write(response) #.message.content or .reasoning
+                                if response is not None:
+                                    text = """
+                                    ----------------------------------------------------------
+                                    The real electrical production from Solar Panel is based on a specific one studied previously in an article.
+                                    You can check it out via this [link]()
+                                    Note: We use a free model so generation could take a little bit time to give you answer.
+                                        """
+                                    st.markdown(text)
                         except Exception as e:
                             st.write("Authentication Error:  {}".format(e))
     @staticmethod
     def test():
         """
         """
-        response = requests.get("https://httpbin.org/get")
+        API_KEY = os.getenv("OPENROUTER_API_KEY")
+        headers = {"Authorization": f"Bearer {API_KEY}"}
+        response = requests.get("https://openrouter.ai/api/v1/models", headers=headers)
+
         st.write(f"test of status : {response.status_code}")
         st.json(response.json())
 
