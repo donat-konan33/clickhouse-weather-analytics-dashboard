@@ -119,9 +119,16 @@ class AgentSunAI:
                                    st.markdown(text)
                         except Exception as e:
                             st.write("Authentication Error:  {}".format(e))
-
+    @staticmethod
+    def test():
+        """
+        """
+        response = requests.get("https://httpbin.org/get")
+        st.write(f"test of status : {response.status_code}")
+        st.json(response.json())
 
 if __name__ == '__main__':
 
     suggestions = AgentSunAI()
     suggestions.household_use()
+    suggestions.test()

@@ -6,3 +6,7 @@ cache/
 pandasai.log
 ci_success.txt
 .vscode/
+staging_weather_1_france_weather_2025-02-09.parquet
+video.mp4
+tests/__pycache__/
+weatherdashboard/functions/__pycache__/
