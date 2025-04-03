@@ -11,7 +11,7 @@ package-mode = false
 python = ">=3.9,<3.9.7 || >3.9.7,<3.13"
 streamlit = "1.40.0"
 altair = "4.2.2"
-pandas = "1.5.3"
+pandas = "2.2.0"
 sqlalchemy = "2.0.37"
 google-oauth2-tool = "0.0.3"
 ipython = "8.12.1"
@@ -28,7 +28,15 @@ openai = "^1.61.1"
 streamlit-js-eval = "^0.1.7"
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
+prometheus-client = "^0.21.1"
+ydata-profiling = "^4.16.1"
+numba = "0.58.1"
+ipywidgets = "^8.1.5"
+skforecast = "^0.12.1"
 
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
 
 [build-system]
 requires = ["poetry-core"]

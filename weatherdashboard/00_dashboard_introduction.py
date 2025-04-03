@@ -9,6 +9,53 @@ from weatherdashboard.functions.state import WeatherState
 from weatherdashboard.functions.constants import WeatherConstants
 import numpy as np
 
+############ test PROMETHEUS start #####################
+from prometheus_client import start_http_server, Counter, Gauge, CollectorRegistry, REGISTRY
+import time
+import random
+
+
+# Démarrer le serveur Prometheus sur une seule fois
+@st.cache_resource
+def start_prometheus():
+    try:
+        start_http_server(8004)  # Lancer le serveur si ce n'est pas déjà fait
+    except OSError:
+            pass  # Ignore l'erreur si le port est déjà utilisé
+
+
+
+# Définition des métriques
+# Définir les métriques une seule fois avec REGISTRY
+def get_metrics():
+    registry = CollectorRegistry()
+
+    # Définir les métriques
+    request_count = Counter("streamlit_requests_total", "Total des requêtes reçues", registry=registry)
+    latency = Gauge("streamlit_latency_seconds", "Temps de réponse", registry=registry)
+
+    return request_count, latency, registry
+
+
+def simulate_process():
+    REQUEST_COUNT.inc()
+    start = time.time()
+    time.sleep(random.uniform(0.1, 0.5))
+    LATENCY.set(time.time() - start)
+
+# Fonction pour obtenir la valeur des métriques
+def get_metric_value(metric):
+    # Collecte les données et récupère la valeur
+    for sample in metric.collect():
+        for s in sample.samples:
+            return s.value  # Retourner la première valeur de la métrique collectée
+
+# Utiliser st.session_state pour garder l'état
+if "REQUEST_COUNT" not in st.session_state:
+    st.session_state.REQUEST_COUNT, st.session_state.LATENCY, st.session_state.REGISTRY = get_metrics()
+
+
+##############  test END ###################
 
 class WeatherDashboard:
     def __init__(self) -> None:
@@ -124,3 +171,19 @@ class WeatherDashboard:
 if __name__ == "__main__":
     dashboard = WeatherDashboard()
     dashboard.introduction_page()
+
+#    ########### PROMETHEUS ################
+#    start_prometheus()
+#    REQUEST_COUNT = st.session_state.REQUEST_COUNT
+#    LATENCY = st.session_state.LATENCY
+#
+#
+#    st.title("📊 Streamlit & Prometheus Dashboard")
+#
+#    if st.button("Generate a request"):
+#        simulate_process()
+#        st.success("Simulated Requests ! 🚀")
+#
+#    st.write("🔢 **total Number of request :**", get_metric_value(REQUEST_COUNT))
+#    st.write("⏳ **latest latency saved :**", get_metric_value(LATENCY), "s")
+#    ######################################################################

@@ -5,7 +5,7 @@ This page gives information to sunshine
 import streamlit as st
 st.set_page_config(page_title="Weather Dashboard",
                  layout="wide",
-                 page_icon="🌦️")
+                 page_icon="🌤️")
 
 import sys
 sys.path.append("/app")
@@ -154,21 +154,24 @@ class SolarTrend:
 if __name__ == "__main__":
     st.write("# 🌞Sunshine Data")
     data_visualizations = SolarTrend()
-    st.dataframe(data_visualizations.geo_data)
+    dataframe = st.checkbox("Show data")
+    if dataframe:
+        st.dataframe(data_visualizations.geo_data)
 
+    st.markdown("---")
+    st.subheader("Choropleth Map of Solar Energy of (France Metro)")
     col1, col2 = st.columns([2, 2])
-    with st.subheader("Choropleth Map of Solar Energy of (France Metro)"):
-        with col1:
-            with st.container(border=True):
-                data_visualizations.france_dep_map()
+    with col1:
+        with st.container(border=True):
+            data_visualizations.france_dep_map()
 
-        with col2:
-            with st.container(border=True):
-                data_visualizations.france_reg_map()
+    with col2:
+        with st.container(border=True):
+            data_visualizations.france_reg_map()
 
-
-    st.subheader("Violin Plot")
+    st.markdown("---")
+    st.subheader("Distribution from today to 7 next days")
     data_visualizations.violin_plot()
-
-    st.subheader("Violin Plot by region")
+    st.markdown("---")
+    st.subheader("Distribution by region from today to 7 next days")
     data_visualizations.viloin_plot_by_region()

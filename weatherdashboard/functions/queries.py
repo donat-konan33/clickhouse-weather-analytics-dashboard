@@ -100,7 +100,7 @@ class WeatherQueries:
                 windgust, pressure, solarenergy_kwhpm2, temp, feelslike,
                 precip
                 FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-                WHERE department = '{department}'
+                WHERE department = "{department}"
                 ORDER BY dates
                 """
         table_result = self._run_query(query=query)
@@ -126,7 +126,7 @@ class WeatherQueries:
         query = f"""
                 SELECT department, reg_name, solarenergy_kwhpm2, solarradiation
                 FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-                WHERE reg_name = '{region}'
+                WHERE reg_name = "{region}"
                 """
         table_result = self._run_query(query=query)
         return table_result
@@ -143,7 +143,7 @@ class WeatherQueries:
                 AVG(solarenergy_kwhpm2) * 2.7 AS available_solarenergy_kwhc,
                 AVG(solarenergy_kwhpm2) * 2.7 * 0.217 AS real_production_kwhpday
                 FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-                WHERE department= '{department}'
+                WHERE department= "{department}"
                 GROUP BY department
                 """
         table_result = self._run_query(query=query)
@@ -175,6 +175,65 @@ class WeatherQueries:
         except Exception as e:
             st.error(f"Error when retrieving location : {e}")
 
+    def get_entire_department_data(self, department):
+        """
+        Get local entire data for a department
+        """
+        query = f"""
+                SELECT department,
+                        dates,
+                        ROUND(solarenergy_kwhpm2, 1) AS solarenergy_kwhpm2,
+                        ROUND(solarradiation, 1) AS solarradiation,
+                        ROUND(temp, 1) AS temp,
+                        ROUND(precip, 1) AS precip,
+                        ROUND(uvindex, 1) AS uvindex
+                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newentiredata`
+                WHERE department= "{department}"
+                ORDER BY dates
+                """
+        table_result = self._run_query(query=query)
+        return table_result
+
+
+    def get_entire_region_data(self, region):
+        """
+        Get local entire data for a department
+        """
+        query = f"""
+                SELECT reg_name,
+                        dates,
+                        ROUND(AVG(solarenergy_kwhpm2), 1) AS solarenergy_kwhpm2,
+                        ROUND(AVG(solarradiation), 1) AS solarradiation,
+                        ROUND(AVG(temp), 1) AS temp,
+                        ROUND(AVG(precip), 1) AS precip,
+                        ROUND(AVG(uvindex), 1) AS uvindex
+
+                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newentiredata`
+                WHERE reg_name="{region}"
+                GrOUP BY dates, reg_name
+                ORDER BY dates, reg_name
+                """
+        table_result = self._run_query(query=query)
+        return table_result
+
+    def get_entire_data(self):
+        """
+        Get global entire data for france
+        """
+        query = f"""
+                SELECT dates,
+                        ROUND(AVG(solarenergy_kwhpm2), 1) AS solarenergy_kwhpm2,
+                        ROUND(AVG(solarradiation), 1) AS solarradiation,
+                        ROUND(AVG(temp), 1) AS temp,
+                        ROUND(AVG(precip), 1) AS precip,
+                        ROUND(AVG(uvindex), 1) AS uvindex
+
+                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newentiredata`
+                GROUP BY dates
+                ORDER BY dates
+                """
+        table_result = self._run_query(query=query)
+        return table_result
 
 
 if __name__ == "__main__":

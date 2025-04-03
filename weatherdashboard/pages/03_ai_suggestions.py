@@ -48,8 +48,8 @@ class AgentSunAI:
             pick_dep = st.selectbox("Select a department... ", self.constants.department())
             data = self.state.get_query_result("get_solarenergy_agg_pday", pick_dep)
             data_dict = data.to_dict(orient="records")
-            st.dataframe(data)
-            st.json(data_dict[0])
+            #st.dataframe(data)
+            #st.json(data_dict[0])
 
             with st.container(border=True):
                 col3, col4 = st.columns([3, 2])
@@ -110,7 +110,7 @@ class AgentSunAI:
                                     text = """
                                     ----------------------------------------------------------
                                     The real electrical production from Solar Panel is based on a specific one studied previously in an article.
-                                    You can check it out via this [link]()
+                                    You can check it out via this [link](https://onokana8.github.io/SolarPanelsNasa/2024/05/30/Analyzing-extracted-Data-handling-with-Power-BI-and-Python.html)
                                     Note: We use a free model so generation could take a little bit time to give you answer.
                                         """
                                     st.markdown(text)
@@ -131,4 +131,4 @@ if __name__ == '__main__':
 
     suggestions = AgentSunAI()
     suggestions.household_use()
-    suggestions.test()
+    #suggestions.test()

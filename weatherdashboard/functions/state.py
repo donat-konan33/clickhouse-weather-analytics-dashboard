@@ -56,10 +56,10 @@ class WeatherState:
             key = self.generate_unique_key(weatherquery_method_to_call, *args)
 
             if key in st.session_state:
-                st.info("Retrieve data from state...")
+                st.info("Retrieving data from state...")
                 return self.get_data_from_state(key)
             else:
-                st.info("Retrieve data from GOOGLE BIGQUERY database...")
+                st.info("Retrieving data from GOOGLE BIGQUERY database...")
                 results = getattr(self.queries, weatherquery_method_to_call)(*args) # dynamic method call
                 self.store_in_state(weatherquery_method_to_call, results)
                 return results
