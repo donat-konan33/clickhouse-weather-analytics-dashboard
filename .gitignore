@@ -9,5 +9,6 @@ ci_success.txt
 staging_weather_1_france_weather_2025-02-09.parquet
 video.mp4
 tests/__pycache__/
+<<<<<<< HEAD
 __pycache__/
-weatherdashboard/functions/__pycache__/
+=======
