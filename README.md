@@ -1,8 +1,10 @@
 # **Sreamlit Dashboard Based on BigQuery Mart Table**
+---
+
  This Project aims to create dashboard to visualize all interesting charts that can help weather team on seven next days and that every day you.
 
 Below an example of what you can do with app. You will be able to get suggestion from AI Agent named `AgentSunAI`
-![watch video](https://donat-konan33.github.io/assets/videos/demo.mp4)
+[🎥 Watch Streamlit App Demo](https://donat-konan33.github.io/assets/videos/demo.mp4)
 
 **Note :** You need to populate ``.streamlit directory`` with a specific `secrets.toml` file to allow streamlit to connect to your BigQuery Project.
 
@@ -27,7 +29,7 @@ client_x509_cert_url = "xxx"
 For more details hit this [**streamlit docs**](https://docs.streamlit.io/develop/tutorials/databases/bigquery).
 ---
 
-## CI/CD workflow
+## **CI/CD workflow**
 We will specially raise this point about ``staging deployment and production deployment``.
 In our current case we use :
 
