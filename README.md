@@ -3,8 +3,21 @@
 
  This Project aims to create dashboard to visualize all interesting charts that can help weather team on seven next days and that every day you.
 
-Below an example of what you can do with app. You will be able to get suggestion from AI Agent named `AgentSunAI`
-[🎥 Watch Streamlit App Demo](https://donat-konan33.github.io/assets/videos/demo.mp4)
+[![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![BigQuery](https://img.shields.io/badge/-BigQuery-4285F4?style=flat&logo=google-big-query&logoColor=white)](https://cloud.google.com/bigquery)
+[![Visual Crossing](https://img.shields.io/badge/-Visual%20Crossing-00AEEF?style=flat&logo=visualcrossing&logoColor=white)](https://www.visualcrossing.com/)
+[![GitHub Actions CI/CD](https://img.shields.io/badge/-GitHub%20Actions%20CI%2FCD-24292F?style=flat&logo=githubactions&logoColor=white)](https://docs.github.com/en/actions)
+[![DeepSeek](https://img.shields.io/badge/-DeepSeek-1A73E8?style=flat&logo=deepseek&logoColor=white)](https://deepseek.com/)
+[![OpenRouter API](https://img.shields.io/badge/-OpenRouter%20API-FF9900?style=flat&logo=openai&logoColor=white)](https://openrouter.ai/)
+
+
+---
+Below an example of what you can do with app. You will be able to get suggestion from AI Agent named `AgentSunAI`:
+
+[![Watch Streamlit App Demo](assets/images/dashboard_ui_screenshot.png)](https://donat-konan33.github.io/assets/videos/demo.mp4)
+
+Click the image above to watch a brief demo of the Streamlit dashboard. The video highlights interactive charts generated from aggregated database values and demonstrates how AgentSunAI offers suggestions on energy consumption, tailored to the projected energy density for each region or department over the next seven days.
+
 
 **Note :** You need to populate ``.streamlit directory`` with a specific `secrets.toml` file to allow streamlit to connect to your BigQuery Project.
 
