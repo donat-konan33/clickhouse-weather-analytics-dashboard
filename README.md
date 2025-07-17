@@ -27,7 +27,10 @@ auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
 client_x509_cert_url = "xxx"
 ```
 For more details hit this [``streamlit docs``](https://docs.streamlit.io/develop/tutorials/databases/bigquery).
+
 ---
+
+
 
 ## **CI/CD workflow**
 We will specially raise this point about ``staging deployment and production deployment``.
@@ -112,3 +115,24 @@ Finally the we have to create three (3) CI/CD files as
 - cd-prod.yml
 
 And we'll integrate those soon in a next release of our app. Let's suppose current cd.yml deploy our ``staging app`` to test its behavior.
+
+---
+
+## Environment Variables
+
+| Variable             | Description                                                                                  |
+|----------------------|----------------------------------------------------------------------------------------------|
+| `PROJECT_ID`         | Google Cloud project ID used for BigQuery and other GCP services.                            |
+| `OPENROUTER_API_KEY` | API key for accessing OpenRouter services, typically used for AI integrations.               |
+| `LOCATION`           | Deployment region or location for cloud resources (e.g., `us-central1`).                     |
+| `HOSTNAME`           | Hostname or domain where the application will be deployed or accessed.                       |
+| `REPOSITORY`         | Container image repository name (e.g., DockerHub or GCR repository).                         |
+| `IMAGE_NAME`         | Name of the container image for the application.                                             |
+| `IMAGE_TAG`          | Tag for the container image, often used to specify version (e.g., `latest`, `v1.0.0`).       |
+| `IMAGE_FULL_TAG`     | Full reference to the container image including repository, name, and tag.                   |
+
+For Production, if You use Github Actions like me you have to assign them as secrets according to your Prod Environment.
+
+---
+
+**Important** : The ETLT Data Pipeline source code Using Airbyte, GCS, BigQuery, Dbt and Airflow can be found by hitting this [link](https://github.com/donat-konan33/EtltAirbyteGcsBigQueryDbtAirflow).
