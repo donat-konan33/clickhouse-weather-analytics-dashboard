@@ -1,4 +1,4 @@
-# **Sreamlit Dashboard Based on BigQuery Mart Table**
+# **Streamlit Dashboard Based on BigQuery Mart Table**
 ---
 
  This Project aims to create dashboard to visualize all interesting charts that can help weather team on seven next days and that every day you.
@@ -26,7 +26,7 @@ token_uri = "https://oauth2.googleapis.com/token"
 auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
 client_x509_cert_url = "xxx"
 ```
-For more details hit this [**streamlit docs**](https://docs.streamlit.io/develop/tutorials/databases/bigquery).
+For more details hit this [``streamlit docs``](https://docs.streamlit.io/develop/tutorials/databases/bigquery).
 ---
 
 ## **CI/CD workflow**
