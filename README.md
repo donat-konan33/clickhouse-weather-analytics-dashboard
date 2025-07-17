@@ -1,8 +1,4 @@
 # **Streamlit Dashboard Based on BigQuery Mart Table**
----
-
- This Project aims to create dashboard to visualize all interesting charts that can help weather team on seven next days and that every day you.
-
 [![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![BigQuery](https://img.shields.io/badge/-BigQuery-4285F4?style=flat&logo=google-big-query&logoColor=white)](https://cloud.google.com/bigquery)
 [![Visual Crossing](https://img.shields.io/badge/-Visual%20Crossing-00AEEF?style=flat&logo=visualcrossing&logoColor=white)](https://www.visualcrossing.com/)
@@ -10,15 +6,23 @@
 [![DeepSeek](https://img.shields.io/badge/-DeepSeek-1A73E8?style=flat&logo=deepseek&logoColor=white)](https://deepseek.com/)
 [![OpenRouter API](https://img.shields.io/badge/-OpenRouter%20API-FF9900?style=flat&logo=openai&logoColor=white)](https://openrouter.ai/)
 
-
----
-Below an example of what you can do with app. You will be able to get suggestion from AI Agent named `AgentSunAI`:
+This Project aims to create dashboard to visualize all interesting charts that can help weather team on seven next days and that every day you.
+Below an example of what you can do with app. You will be able to get suggestion from AI Agent named ``AgentSunAI``.
 
 [![Watch Streamlit App Demo](assets/images/dashboard_ui_screenshot.png)](https://donat-konan33.github.io/assets/videos/demo.mp4)
 
 Click the image above to watch a brief demo of the Streamlit dashboard. The video highlights interactive charts generated from aggregated database values and demonstrates how AgentSunAI offers suggestions on energy consumption, tailored to the projected energy density for each region or department over the next seven days.
 
+---
+## **Local Installation**
 
+### 1. Clone the repository:
+```bash
+git clone https://github.com/donat-konan33/BigQueryStreamlitAnalyticsDashboard.git
+cd BigQueryStreamlitAnalyticsDashboard
+```
+---
+### 2. Manage ``.streamlit directory``
 **Note :** You need to populate ``.streamlit directory`` with a specific `secrets.toml` file to allow streamlit to connect to your BigQuery Project.
 
 That is like below:
@@ -39,13 +43,58 @@ token_uri = "https://oauth2.googleapis.com/token"
 auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
 client_x509_cert_url = "xxx"
 ```
-For more details hit this [``streamlit docs``](https://docs.streamlit.io/develop/tutorials/databases/bigquery).
+That supposes you have already got your GCP credential like `SERVICE_ACCOUNT KEY`. For more details hit this [``streamlit docs``](https://docs.streamlit.io/develop/tutorials/databases/bigquery).
+
+
+### 3. Environment Variables
+
+Important variables needed for app operating:
+
+| Variable             | Description                                                                                  |
+|----------------------|----------------------------------------------------------------------------------------------|
+| `PROJECT_ID`         | Google Cloud project ID used for BigQuery and other GCP services.                            |
+| `OPENROUTER_API_KEY` | API key for accessing OpenRouter services, typically used for AI integrations.               |
+| `LOCATION`           | Deployment region or location for cloud resources (e.g., `us-central1`).                     |
+| `HOSTNAME`           | Hostname or domain where the application will be deployed or accessed.                       |
+| `REPOSITORY`         | Container image repository name (e.g., DockerHub or GCR repository).                         |
+| `IMAGE_NAME`         | Name of the container image for the application.                                             |
+| `IMAGE_TAG`          | Tag for the container image, often used to specify version (e.g., `latest`, `v1.0.0`).       |
+| `IMAGE_FULL_TAG`     | Full reference to the container image including repository, name, and tag.                   |
+
+
+Now you have the meaning of the variables needed, you have to :
+- Populate local variables by following `.env.example` file if you execute locally the App.
+- For Production, if You use [``Github Actions``](https://docs.github.com/en/actions/tutorials/deploying-with-github-actions?search-overlay-input=define+environment+variable+on+prod+environment&search-overlay-ask-ai=true) like me you have to assign them as secrets and vars according to your deployment Environment.
+
+As a rule, to define an environment variable in a "prod" environment, follow these steps:
+
+1. Navigate to the main page of your repository on GitHub.
+2. Under your repository name, click Settings. If you don't see the "Settings" tab, select the More dropdown menu, then click Settings.
+3. In the left sidebar, click Environments.
+4. Click on the "prod" environment.
+5. Under Environment variables, click Add variable.
+6. In the Name field, enter the name of your variable.
+7. In the Value field, enter the value for your variable.
+8. Click Add variable.
+
+These variables will only be accessible to workflow jobs that reference the "prod" environment and can be accessed using the vars context.
+
+More details: [Managing environments for deployment](https://docs.github.com/en/actions/how-tos/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment).
+
+
+### 4. Start the Streamlit App in a container with ``Docker compose``
+
+To start the Streamlit app using Docker Compose, run the following command in your terminal:
+
+```bash
+docker compose -f docker-compose-streamlit.yml up -d
+```
+
+This will build and launch the application in detached mode using the configuration defined in `docker-compose-streamlit.yml`.
 
 ---
 
-
-
-## **CI/CD workflow**
+## **CI/CD workflow Understanding**
 We will specially raise this point about ``staging deployment and production deployment``.
 In our current case we use :
 
@@ -131,21 +180,4 @@ And we'll integrate those soon in a next release of our app. Let's suppose curre
 
 ---
 
-## Environment Variables
-
-| Variable             | Description                                                                                  |
-|----------------------|----------------------------------------------------------------------------------------------|
-| `PROJECT_ID`         | Google Cloud project ID used for BigQuery and other GCP services.                            |
-| `OPENROUTER_API_KEY` | API key for accessing OpenRouter services, typically used for AI integrations.               |
-| `LOCATION`           | Deployment region or location for cloud resources (e.g., `us-central1`).                     |
-| `HOSTNAME`           | Hostname or domain where the application will be deployed or accessed.                       |
-| `REPOSITORY`         | Container image repository name (e.g., DockerHub or GCR repository).                         |
-| `IMAGE_NAME`         | Name of the container image for the application.                                             |
-| `IMAGE_TAG`          | Tag for the container image, often used to specify version (e.g., `latest`, `v1.0.0`).       |
-| `IMAGE_FULL_TAG`     | Full reference to the container image including repository, name, and tag.                   |
-
-For Production, if You use Github Actions like me you have to assign them as secrets according to your Prod Environment.
-
----
-
-**Important** : The ETLT Data Pipeline source code Using Airbyte, GCS, BigQuery, Dbt and Airflow can be found by hitting this [link](https://github.com/donat-konan33/EtltAirbyteGcsBigQueryDbtAirflow).
+**🚨Important** : The ETLT Data Pipeline source code Using Airbyte, GCS, BigQuery, Dbt and Airflow can be found by hitting this [link](https://github.com/donat-konan33/EtltAirbyteGcsBigQueryDbtAirflow).
