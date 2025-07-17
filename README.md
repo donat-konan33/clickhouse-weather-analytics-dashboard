@@ -2,9 +2,12 @@
 [![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![BigQuery](https://img.shields.io/badge/-BigQuery-4285F4?style=flat&logo=google-big-query&logoColor=white)](https://cloud.google.com/bigquery)
 [![Visual Crossing](https://img.shields.io/badge/-Visual%20Crossing-00AEEF?style=flat&logo=visualcrossing&logoColor=white)](https://www.visualcrossing.com/)
-[![GitHub Actions CI/CD](https://img.shields.io/badge/-GitHub%20Actions%20CI%2FCD-24292F?style=flat&logo=githubactions&logoColor=white)](https://docs.github.com/en/actions)
-[![DeepSeek](https://img.shields.io/badge/-DeepSeek-1A73E8?style=flat&logo=deepseek&logoColor=white)](https://deepseek.com/)
 [![OpenRouter API](https://img.shields.io/badge/-OpenRouter%20API-FF9900?style=flat&logo=openai&logoColor=white)](https://openrouter.ai/)
+[![DeepSeek](https://img.shields.io/badge/-DeepSeek-1A73E8?style=flat&logo=deepseek&logoColor=white)](https://deepseek.com/)
+[![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+[![GitHub Actions CI/CD](https://img.shields.io/badge/-GitHub%20Actions%20CI%2FCD-24292F?style=flat&logo=githubactions&logoColor=white)](https://docs.github.com/en/actions)
+[![Artifact Registry](https://img.shields.io/badge/-Artifact%20Registry-4285F4?style=flat&logo=google-cloud&logoColor=white)](https://cloud.google.com/artifact-registry)
+[![Cloud Run](https://img.shields.io/badge/-Cloud%20Run-4285F4?style=flat&logo=google-cloud&logoColor=white)](https://cloud.google.com/run)
 
 This Project aims to create dashboard to visualize all interesting charts that can help weather team on seven next days and that every day you.
 Below an example of what you can do with app. You will be able to get suggestion from AI Agent named ``AgentSunAI``.
