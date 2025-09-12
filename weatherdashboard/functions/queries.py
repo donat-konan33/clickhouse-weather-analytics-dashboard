@@ -5,7 +5,8 @@ from streamlit_js_eval import streamlit_js_eval
 from weatherdashboard.functions.constants import WeatherConstants
 import os
 
-BASE_URL = "http://172.22.88.225:8005" # eventually local for test
+API_HOST = os.environ.get("API_HOST")
+BASE_URL = f"http://{API_HOST}:8005" # eventually local for test
 
 class WeatherQueries:
     def __init__(self) -> None:
