@@ -5,7 +5,6 @@ class WeatherConstants:
         list of datasets of projects
         """
         return [
-            "raw_olddata_weatherteam_mart",
         ]
 
     @staticmethod
@@ -18,7 +17,7 @@ class WeatherConstants:
     @staticmethod
     def department():
         """
-        list od departments
+        list of studied departments
         """
         return ['Ain', 'Ardèche', 'Drôme', 'Isère', 'Loire', 'Lozère',
                 'Pyrénées-Orientales', 'Corrèze', 'Creuse', 'Haute-Vienne',
@@ -46,6 +45,7 @@ class WeatherConstants:
     @staticmethod
     def region():
         """
+        list of studied France Regions
         """
         return [
                 "Occitanie",

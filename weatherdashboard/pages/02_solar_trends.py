@@ -36,7 +36,7 @@ class SolarTrend:
 
         self.table_name = "mart_newdata"
         self.date = st.selectbox("Select one of the 7 next days", self.queries.get_date())
-        self.geo_data = self.state.get_query_result("get_solarenergy_geo_data_data", self.table_name, self.date)
+        self.geo_data = self.state.get_query_result("get_solarenergy_geo_data_data", self.date)
 
     def france_dep_map(self):
         """

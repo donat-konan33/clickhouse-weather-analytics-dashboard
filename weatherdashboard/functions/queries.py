@@ -2,91 +2,49 @@ import streamlit as st
 import pandas as pd
 import requests
 from streamlit_js_eval import streamlit_js_eval
-from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.constants import WeatherConstants
 import os
 
-PROJECT_ID = os.environ.get("PROJECT_ID")
+BASE_URL = "http://172.22.88.225:8005" # eventually local for test
 
 class WeatherQueries:
     def __init__(self) -> None:
-        self.bq_client = WeatherDataWarehouse().db_client
         self.datasets = WeatherConstants.dataset()
 
-    # # Perform query.
-    # # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
-    @st.cache_data(ttl=3600)
-    def _run_query(_self, query):
-        """
-        Base utility method queries a database using pandas and returning a dataframe
-
-        Parameters
-        ----------
-        query: Str
-            SQL query as a f-string
-
-        Returns
-        -------
-        table : pandas.DataFrame
-            Dataframe containing the result of the query
-
-        """
-        bq_result_object = _self.bq_client.query(query)
-        return bq_result_object.to_dataframe()
-
-    def get_data(self, table_name):
+    def get_data(self) -> pd.DataFrame:
         """
         Get a table from the mart dataset
         """
-        query = f"""
-                SELECT *
-                FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}`
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/get_data"
+        result_table = requests.get(BASE_URL + endpoint).json()
+        return pd.DataFrame(result_table)
 
-    def get_temp_data(self, table_name, department):
+    def get_temp_data(self, department) -> pd.DataFrame:
         """
         Get temperature data like temp, fileslikemin, fileslikemax and feelslike
         """
-        query = f"""
-                SELECT dates, weekday_name, department, temp, tempmin, tempmax, feelslike, feelslikemin, feelslikemax, descriptions, weekday_name
-                FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where department='{department}' order by dates
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/get_temp_data"
+        params = {"department": department}
+        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        return pd.DataFrame(result_table)
 
 
-    def get_solarenergy_geo_data_data(self, table_name, date):
+    def get_solarenergy_geo_data_data(self, date) -> pd.DataFrame:
         """
+        Get Solar energy data for all studied location by date
         """
-        query = f"""
-        SELECT
-                dates, weekday_name, department, geo_point_2d,
-                geojson,
-                solarenergy_kwhpm2,
-                solarradiation,
-                reg_name,
-                avg_solarenergy_kwhpm2,
-                avg_solarradiation
-
-        FROM `{PROJECT_ID}.{self.datasets[0]}.{table_name}` where dates = '{date}'
-        """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/solar_geo_data"
+        params = {"date": date}
+        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        return pd.DataFrame(result_table)
 
 
     def get_date(self):
         """
+        To get studied date window
         """
-        query = f"""
-        SELECT distinct(dates) AS dates
-        FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-        ORDER BY dates
-        """
-        table_result = self._run_query(query=query)
-        table_result['date'] = table_result.dates.astype("str")
-        return table_result.date
+        endpoint = "/date"
+        return requests.get(BASE_URL + endpoint).json()
 
 
     def get_tfptwgp(self, department):
@@ -94,42 +52,28 @@ class WeatherQueries:
         Get some interesting features like tfptwgp as :
         Temperature, Feels like, Pecipitation, Wind, Gust and Pressure
         """
-
-        query = f"""
-                SELECT dates, department, reg_name, windspeed,
-                windgust, pressure, solarenergy_kwhpm2, temp, feelslike,
-                precip
-                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-                WHERE department = "{department}"
-                ORDER BY dates
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/common_features"
+        params = {"department" : department}
+        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        return pd.DataFrame(result_table)
 
     def get_sunshine_data(self):
         """
         Get some interesting features like tfptwgp as :
         Temperature, Feels like, Pecipitation, Wind, Gust and Pressure
         """
-
-        query = f"""
-                SELECT dates, reg_name, department, solarenergy_kwhpm2, solarradiation
-                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-                ORDER BY dates
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/get_sunshine_data"
+        result_table = requests.get(BASE_URL + endpoint).json()
+        return pd.DataFrame(result_table)
 
     def get_region_sunshine_data(self, region):
         """
+        Get region solar features
         """
-        query = f"""
-                SELECT department, reg_name, solarenergy_kwhpm2, solarradiation
-                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-                WHERE reg_name = "{region}"
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/get_region_sunshine_data"
+        params = {"region": region}
+        result_table = requests.get(BASE_URL + endpoint, params=params)
+        return pd.DataFrame(result_table)
 
     def get_solarenergy_agg_pday(self, department):
         """
@@ -137,22 +81,14 @@ class WeatherQueries:
         Panel area = 2.7 m²
         Panel efficiency = 21.7%
         """
-        query = f"""
-                SELECT department,
-                AVG(solarenergy_kwhpm2) AS solarenergy_kwhpm2,
-                AVG(solarenergy_kwhpm2) * 2.7 AS available_solarenergy_kwhc,
-                AVG(solarenergy_kwhpm2) * 2.7 * 0.217 AS real_production_kwhpday
-                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newdata`
-                WHERE department= "{department}"
-                GROUP BY department
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/get_solarenergy_agg_pday"
+        params = {"department": department}
+        return requests.get(BASE_URL + endpoint, params=params).json()
 
     def get_location(self):
         """
+        Automatically Get User LOcation
         """
-
         try:
             user_location = streamlit_js_eval(js_expressions="navigator.geolocation.getCurrentPosition((pos) => pos.coords)", key="geo_position")
             st.write(user_location)
@@ -175,65 +111,32 @@ class WeatherQueries:
         except Exception as e:
             st.error(f"Error when retrieving location : {e}")
 
-    def get_entire_department_data(self, department):
-        """
-        Get local entire data for a department
-        """
-        query = f"""
-                SELECT department,
-                        dates,
-                        ROUND(solarenergy_kwhpm2, 1) AS solarenergy_kwhpm2,
-                        ROUND(solarradiation, 1) AS solarradiation,
-                        ROUND(temp, 1) AS temp,
-                        ROUND(precip, 1) AS precip,
-                        ROUND(uvindex, 1) AS uvindex
-                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newentiredata`
-                WHERE department= "{department}"
-                ORDER BY dates
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+
+    def get_entire_department_data(self, department) -> pd.DataFrame:
+        """Get local entire data for a department"""
+        endpoint = "/get_entire_department_data"
+        params = {"department": department}
+        result_table = requests.get(BASE_URL + endpoint, params=params)
+        return pd.DataFrame(result_table)
 
 
     def get_entire_region_data(self, region):
         """
-        Get local entire data for a department
+        Get local entire data for a region
         """
-        query = f"""
-                SELECT reg_name,
-                        dates,
-                        ROUND(AVG(solarenergy_kwhpm2), 1) AS solarenergy_kwhpm2,
-                        ROUND(AVG(solarradiation), 1) AS solarradiation,
-                        ROUND(AVG(temp), 1) AS temp,
-                        ROUND(AVG(precip), 1) AS precip,
-                        ROUND(AVG(uvindex), 1) AS uvindex
-
-                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newentiredata`
-                WHERE reg_name="{region}"
-                GrOUP BY dates, reg_name
-                ORDER BY dates, reg_name
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/get_entire_region_data"
+        params = {"region": region}
+        result_table = requests.get(BASE_URL + endpoint, params=params)
+        return pd.DataFrame(result_table)
 
     def get_entire_data(self):
         """
-        Get global entire data for france
+        Get global entire data for france so far: Useful for Machine Learning
+        Model development for forecasting
         """
-        query = f"""
-                SELECT dates,
-                        ROUND(AVG(solarenergy_kwhpm2), 1) AS solarenergy_kwhpm2,
-                        ROUND(AVG(solarradiation), 1) AS solarradiation,
-                        ROUND(AVG(temp), 1) AS temp,
-                        ROUND(AVG(precip), 1) AS precip,
-                        ROUND(AVG(uvindex), 1) AS uvindex
-
-                FROM `{PROJECT_ID}.{self.datasets[0]}.mart_newentiredata`
-                GROUP BY dates
-                ORDER BY dates
-                """
-        table_result = self._run_query(query=query)
-        return table_result
+        endpoint = "/get_ml_data"
+        result_table = requests.get(BASE_URL + endpoint)
+        return pd.DataFrame(result_table)
 
 
 if __name__ == "__main__":

@@ -3,11 +3,10 @@ FROM python:3.9.20-slim
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8080
+ENV PORT=8501
 
 WORKDIR /app
 
-COPY ./.streamlit ./.streamlit
 COPY ./pyproject.toml  ./pyproject.toml
 COPY ./poetry.lock  ./poetry.lock
 COPY ./weatherdashboard  ./weatherdashboard

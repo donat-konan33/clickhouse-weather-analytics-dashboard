@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   streamlit:
+    container_name: dashboard
     build:
       context: .
     restart: always
@@ -11,7 +12,6 @@ services:
       - ./data:/app/data/
     command: ["streamlit", "run", "weatherdashboard/00_dashboard_introduction.py"]
     environment:
-      - PROJECT_ID=$PROJECT_ID
       - OPENROUTER_API_KEY=$OPENROUTER_API_KEY
 
     ports:

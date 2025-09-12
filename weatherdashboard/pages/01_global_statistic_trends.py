@@ -16,7 +16,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-from weatherdashboard.functions.database import WeatherDataWarehouse
 from weatherdashboard.functions.queries import WeatherQueries
 from weatherdashboard.functions.state import WeatherState
 from weatherdashboard.functions.constants import WeatherConstants
@@ -25,7 +24,6 @@ from weatherdashboard.functions.constants import WeatherConstants
 
 class DescriptiveStatistic:
     def __init__(self) -> None:
-        self.bq_client = WeatherDataWarehouse().db_client
         self.state = WeatherState()
         self.queries = WeatherQueries()
 
@@ -33,10 +31,11 @@ class DescriptiveStatistic:
     # temperaure and feels like
     def temperature(self, dep_option):
         """
+        Show temperature stats
         """
-        table = "mart_newdata"
         #feature_option = st.selectbox("Select a temperature feature", self.constants.temp_feature())
-        temp_data = self.state.get_query_result("get_temp_data", table, dep_option)
+        temp_data = self.state.get_query_result("get_temp_data", dep_option)
+        st.dataframe(temp_data)
         temp_data['date'] = pd.to_datetime(temp_data.dates)
 
         fig = go.Figure()
