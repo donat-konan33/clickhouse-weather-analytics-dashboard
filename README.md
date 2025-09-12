@@ -30,7 +30,7 @@ cd ClickHouseWeatherAnalyticsDashboard
 Important variables needed for app operating:
 
 | Variable             | Description                                                                                  |
-|----------------------|----------------------------------------------------------------------------------------------|                       |
+|----------------------|----------------------------------------------------------------------------------------------|
 | `OPENROUTER_API_KEY` | API key for accessing OpenRouter services, typically used for AI integrations.               |
 
 
