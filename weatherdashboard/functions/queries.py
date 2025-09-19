@@ -5,7 +5,7 @@ from streamlit_js_eval import streamlit_js_eval
 from weatherdashboard.functions.constants import WeatherConstants
 import os
 
-BASE_URL = os.environ.get("BASE_URL")
+BASE_URL = os.environ.get("BASE_URL") # CHANGE FOR TEST WEBHOOK URL
 
 class WeatherQueries:
     def __init__(self) -> None:
