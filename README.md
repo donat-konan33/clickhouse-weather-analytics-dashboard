@@ -32,6 +32,7 @@ Important variables needed for app operating:
 | Variable             | Description                                                                                  |
 |----------------------|----------------------------------------------------------------------------------------------|
 | `OPENROUTER_API_KEY` | API key for accessing OpenRouter services, typically used for AI integrations.               |
+| `BASE_URL`           | Database API url base (From API RESTful)
 
 
 Now you have the meaning of the variables needed, you have to :
@@ -59,10 +60,10 @@ More details: [Managing environments for deployment](https://docs.github.com/en/
 To start the Streamlit app using Docker Compose, run the following command in your terminal:
 
 ```bash
-docker compose -f docker-compose-streamlit.yml up -d
+docker compose up -d
 ```
 
-This will build and launch the application in detached mode using the configuration defined in `docker-compose-streamlit.yml`.
+This will build and launch the application in detached mode using the configuration defined in `docker-compose.yml`.
 
 ---
 
