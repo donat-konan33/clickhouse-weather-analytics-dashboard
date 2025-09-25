@@ -45,7 +45,7 @@ class WeatherState:
             self.store_in_state(key, None)
         return st.session_state[key]
 
-    def get_query_result(self, weatherquery_method_to_call:str, *args):
+    def get_query_result(self, weatherquery_method_to_call: str, *args):
         """Get query result from state or the API. Store in state if new
 
         Args:
@@ -65,6 +65,9 @@ class WeatherState:
                 if results is not None:
                     self.store_in_state(key, results)
                     return results
+                else:
+                    st.warning("API returned no data.")
+                    return pd.DataFrame()
         except Exception as e:
             st.error(f"An error occurred while executing the query: {e}")
             return pd.DataFrame()

@@ -72,7 +72,7 @@ class WeatherQueries:
         """
         endpoint = "/get_region_sunshine_data"
         params = {"region": region}
-        result_table = requests.get(BASE_URL + endpoint, params=params)
+        result_table = requests.get(BASE_URL + endpoint, params=params).json()
         return pd.DataFrame(result_table)
 
     def get_solarenergy_agg_pday(self, department):
@@ -116,7 +116,7 @@ class WeatherQueries:
         """Get local entire data for a department"""
         endpoint = "/get_entire_department_data"
         params = {"department": department}
-        result_table = requests.get(BASE_URL + endpoint, params=params)
+        result_table = requests.get(BASE_URL + endpoint, params=params).json()
         return pd.DataFrame(result_table)
 
 
@@ -126,7 +126,7 @@ class WeatherQueries:
         """
         endpoint = "/get_entire_region_data"
         params = {"region": region}
-        result_table = requests.get(BASE_URL + endpoint, params=params)
+        result_table = requests.get(BASE_URL + endpoint, params=params).json()
         return pd.DataFrame(result_table)
 
     def get_entire_data(self):
@@ -135,7 +135,7 @@ class WeatherQueries:
         Model development for forecasting
         """
         endpoint = "/get_ml_data"
-        result_table = requests.get(BASE_URL + endpoint)
+        result_table = requests.get(BASE_URL + endpoint).json()
         return pd.DataFrame(result_table)
 
 

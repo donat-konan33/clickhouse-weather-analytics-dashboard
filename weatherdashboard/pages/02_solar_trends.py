@@ -10,7 +10,6 @@ st.set_page_config(page_title="Weather Dashboard",
 import sys
 sys.path.append("/app")
 
-import altair as alt
 import pandas as pd
 import folium
 import json

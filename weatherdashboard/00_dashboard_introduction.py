@@ -57,7 +57,7 @@ class WeatherDashboard:
 
     def introduction_page(self):
         """Layout the views of the dashboard"""
-
+        data = self.state.get_query_result("get_temp_data", self.department)
         st.markdown("""
         <style>
         .big-font {

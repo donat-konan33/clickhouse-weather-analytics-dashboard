@@ -27,15 +27,12 @@ class DescriptiveStatistic:
         self.state = WeatherState()
         self.queries = WeatherQueries()
 
-
     # temperaure and feels like
     def temperature(self, dep_option):
         """
         Show temperature stats
         """
-        #feature_option = st.selectbox("Select a temperature feature", self.constants.temp_feature())
         temp_data = self.state.get_query_result("get_temp_data", dep_option)
-        st.dataframe(temp_data)
         temp_data['date'] = pd.to_datetime(temp_data.dates)
 
         fig = go.Figure()
@@ -91,7 +88,6 @@ class DescriptiveStatistic:
                                        yaxis2=dict(title="Pressure (mbar)", overlaying="y", side="right", showgrid=False)
                                        )
         st.plotly_chart(fig_windpressure)
-
 
 
 if __name__ == "__main__":
