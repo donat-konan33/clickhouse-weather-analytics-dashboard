@@ -27,28 +27,28 @@ cd ClickHouseWeatherAnalyticsDashboard
 
 ### 2. Environment Variables
 
-Important variables needed for app operating:
+Important variables required for app operating:
 
 | Variable             | Description                                                                                  |
 |----------------------|----------------------------------------------------------------------------------------------|
 | `OPENROUTER_API_KEY` | API key for accessing OpenRouter services, typically used for AI integrations.               |
-| `BASE_URL`           | Database API url base (From API RESTful)
+| `BASE_URL`           | Database API url base (From API RESTful)                                                     |
 
 
 Now you have the meaning of the variables needed, you have to :
 - Populate local variables by following `.env.example` file if you execute locally the App.
-- For Production, if You use [``Github Actions``](https://docs.github.com/en/actions/tutorials/deploying-with-github-actions?search-overlay-input=define+environment+variable+on+prod+environment&search-overlay-ask-ai=true) like me you have to assign them as secrets and vars according to your deployment Environment.
+- For Production, if You use [``Github Actions``](https://docs.github.com/en/actions/tutorials/deploying-with-github-actions?search-overlay-input=define+environment+variable+on+prod+environment&search-overlay-ask-ai=true) you have to assign them as secrets and vars according to your deployment Environment.
 
-As a rule, to define an environment variable in a "prod" environment, follow these steps:
+As a rule, to define an environment variable in a ***"prod" environment***, follow these steps:
 
-1. Navigate to the main page of your repository on GitHub.
-2. Under your repository name, click Settings. If you don't see the "Settings" tab, select the More dropdown menu, then click Settings.
-3. In the left sidebar, click Environments.
-4. Click on the "prod" environment.
-5. Under Environment variables, click Add variable.
-6. In the Name field, enter the name of your variable.
-7. In the Value field, enter the value for your variable.
-8. Click Add variable.
+1. **Navigate to the main page of your repository on GitHub.**
+2. **Under your repository name, click Settings. If you don't see the "Settings" tab, select the More dropdown menu, then click Settings.**
+3. **In the left sidebar, click Environments.**
+4. **Click on the "prod" environment.**
+5. **Under Environment variables, click Add variable.**
+6. **In the Name field, enter the name of your variable.**
+7. **In the Value field, enter the value for your variable.**
+8. **Click Add variable.**
 
 These variables will only be accessible to workflow jobs that reference the "prod" environment and can be accessed using the vars context.
 
@@ -56,7 +56,7 @@ More details: [Managing environments for deployment](https://docs.github.com/en/
 
 
 ### 3. Start the Streamlit App in a container with ``Docker compose``
-
+Be aware it required to launch
 To start the Streamlit app using Docker Compose, run the following command in your terminal:
 
 ```bash
@@ -67,5 +67,6 @@ This will build and launch the application in detached mode using the configurat
 
 ---
 
-
-**🚨Important** : The ETLT Data Pipeline source code Using Airbyte, Minio, Click, Dbt and Airflow can be found by hitting this [link](https://github.com/donat-konan33/EtltAirbyteMinioClickhouseDbtAirflow.git).
+**🚨Important** :
+This dashboard is connected to a DataWarehouse that servers weather data via [RESTful API-based API](https://github.com/donat-konan33/EtltAirbyteMinioClickhouseDbtAirflow.git).
+An ETLT Data Pipeline architecture Using Airbyte, Minio, ClickHouse, Dbt and Airflow can be found by hitting the same link described above.
