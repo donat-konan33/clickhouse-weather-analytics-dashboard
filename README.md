@@ -56,8 +56,9 @@ More details: [Managing environments for deployment](https://docs.github.com/en/
 
 
 ### 3. Start the Streamlit App in a container with ``Docker compose``
-Be aware it required to launch
-To start the Streamlit app using Docker Compose, run the following command in your terminal:
+Be aware it required to turn on this [APP](https://github.com/donat-konan33/EtltAirbyteMinioClickhouseDbtAirflow.git) in ``backend`` before starting this Streamlit ``frontend`` APP as using data served by this one.
+
+Once the required step have done, run the following command in your terminal:
 
 ```bash
 docker compose up -d
