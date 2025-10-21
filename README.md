@@ -20,8 +20,8 @@ Click the image above to watch a brief demo of the Streamlit dashboard. The vide
 
 ### 1. Clone the repository:
 ```bash
-git clone https://github.com/donat-konan33/ClickHouseWeatherAnalyticsDashboard.git
-cd ClickHouseWeatherAnalyticsDashboard
+git clone https://github.com/donat-konan33/clickhouse-weather-analytics-dashboard.git
+cd clickhouse-weather-analytics-dashboard
 ```
 ---
 
