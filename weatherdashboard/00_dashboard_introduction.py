@@ -1,30 +1,36 @@
+import requests
 import streamlit as st
-st.set_page_config(page_title="Weather Dashboard",
+st.set_page_config(page_title="Solar Energy Dashboard",
                  layout="wide",
-                 page_icon="🌦️")
+                 page_icon="☀️")
 import sys
 sys.path.append("/app")
-from weatherdashboard.functions.queries import WeatherQueries
-from weatherdashboard.functions.state import WeatherState
-from weatherdashboard.functions.constants import WeatherConstants
+from functions.queries import WeatherQueries
+from functions.state import WeatherState
+from functions.constants import WeatherConstants
 import numpy as np
+from functions.api_client import APIClient
 
-class WeatherDashboard:
+API_URL = st.secrets.get("api").get("BASE_URL", "http://localhost:8005")
+API_KEY = st.secrets.get("api").get("API_KEY")
+
+api_client = APIClient(base_url=API_URL, api_key=API_KEY)
+
+class SolarEnergyDashboard:
     def __init__(self) -> None:
         self.state = WeatherState()
         self.department = WeatherQueries().get_location()
         self.constants = WeatherConstants().department()
 
-        if self.department:
-            st.write(f"You are in {self.department}")
-        else:
-            st.warning("No location found")
+        if not self.department:
+            st.info("📍 Enable location access for personalized data")
 
     def get_data(self, department):
         """
         Get common data for department
         """
         data = self.state.get_query_result("get_temp_data", department)
+
         info_dict = dict(
             weekdayname=data.loc[0, "weekday_name"],
             descriptions=data.loc[0, "descriptions"],
@@ -33,94 +39,104 @@ class WeatherDashboard:
             tempmin=data.loc[0, "tempmin"],
             tempmax=data.loc[0, "tempmax"],
             department=data.loc[0, "department"],
-
         )
+
         return info_dict
 
     def display_info(self, info_dict):
+        """Display weather information card"""
+        html_content = f"""
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                    padding: 25px; border-radius: 10px; color: white; text-align: center;">
+            <h2 style="margin: 10px 0; font-size: 3em; font-weight: bold;">{info_dict['temperature']}°C</h2>
+            <h3 style="margin: 5px 0; font-size: 1.5em;">{info_dict['weekdayname']}</h3>
+            <p style="margin: 5px 0; font-size: 1.2em; font-weight: bold;">📍 {info_dict['department']}</p>
+            <hr style="border: 1px solid rgba(255,255,255,0.3); margin: 15px 0;">
+            <p style="margin: 5px 0;">Range: {info_dict['tempmin']}° to {info_dict['tempmax']}°</p>
+            <p style="margin: 5px 0;">Feels like: {info_dict['feelslike']}°</p>
+            <p style="margin: 10px 0; font-style: italic;">{info_dict['descriptions']}</p>
+        </div>
         """
-        Build to display infos of studied department
-        """
-        st.write(f"# {info_dict['temperature']} °C")
-        st.write(f"## {info_dict['weekdayname']} · Today  ")
-        st.write(f"{info_dict['department']}")
-        container = st.container(border=True)
-        text =  f"""
-                    <div style="text-align: center;">
-                        <p>T (max/min) : {info_dict['tempmax']}°/ {info_dict['tempmin']}°</p>
-                        <p>Feels like : {info_dict['feelslike']}°</p>
-                        <p>{info_dict['descriptions']}</p>
-                    </div>
-                """
-        container.write(text, unsafe_allow_html=True)
+        st.markdown(html_content, unsafe_allow_html=True)
 
 
     def introduction_page(self):
-        """Layout the views of the dashboard"""
-        data = self.state.get_query_result("get_temp_data", self.department)
+        """Display attractive introduction page"""
+
         st.markdown("""
         <style>
-        .big-font {
-            font-size:100px !important;
+        .title-font {
+            font-size: 80px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 28px;
+            color: #666;
+            font-weight: 500;
+            margin-top: -20px;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        st.markdown('<p class="big-font"> 🌦️ Weather Dashboard </p>', unsafe_allow_html=True)
-        col1, col2 = st.columns([4.7, 2.3])
+        st.markdown('<p class="title-font">☀️ Solar Energy Forecast</p>', unsafe_allow_html=True)
+        st.markdown('<p class="subtitle">Empower Your Renewable Energy Decisions</p>', unsafe_allow_html=True)
+
+        col1, col2 = st.columns([3, 2], gap="large")
+
         with col1:
-            with st.container(border=True):
-                st.markdown(
-                """
-                This dashboard application will allow you to overview weather behavior througout the seven next days from present to the seven one. \n
-                -------------------
+            st.markdown("""
+            ### 🎯 Your All-in-One Solar Energy Platform
 
-                You can get a bit of description of what we intend to show you as service. \n
-                -------------------
+            Welcome to your personal solar energy advisor. This dashboard helps you understand weather patterns
+            and solar radiation to optimize your photovoltaic panel usage and energy consumption.
 
-                On ``global statistic trends`` page, you could visualize :
+            #### 📋 What You Can Do:
 
-                👉 An overwiew of data retrieved and saved into our bigquery database \n
-                👉 Chart makes Temperature, feels like  throught the week (the seven next days), ... up \n
+            **📊 Global Statistics**
+            - Track temperature trends throughout the week
+            - Monitor weather patterns across French departments
+            - Understand local climate conditions
 
+            **☀️ Solar Trends Analysis**
+            - Interactive visualizations of solar energy distribution
+            - Regional comparisons and forecasts
+            - Daily and weekly solar radiation patterns
 
-                On ``solar trends page`` , you could see charts like :
+            **⚡ Smart Energy Consumption**
+            - Calculate appliance autonomy with your solar panels
+            - Select from 6 common household appliances
+            - Predict energy independence days
 
-                👉 Map of Metropolitan France showing solar energy (sunchine in kWh/m²) for each department\n
-                👉 Trends according distributions by date and by region
+            **🔮 Time Series Forecasting**
+            - Advanced predictions of solar energy production
+            - Machine learning models for better planning
+            - 15-day energy outlook
+            """)
 
-
-                On ``ai suggestions`` page, you will hit/select your department name : \n
-                👉 Our AI could give you more quick informations about solar trends which could give you a lot of ideas.
-
-                `Time Series` forecast is being built and will come soon ⏰.
-
-                """
-                )
-
-        with col2 :
+        with col2:
             place = np.random.choice(self.constants)
             try:
                 if self.department:
                     info_dict = self.get_data(self.department)
-                    with col2:
-                        with st.container(border=True):
-                            self.display_info(info_dict)
-                elif place:
-                    info_dict = self.get_data(place)
-                    with col2:
-                        with st.container(border=True):
-                            self.display_info(info_dict)
                 else:
-                    info_dict = self.get_data("Paris")
-                    with col2:
-                        with st.container(border=True):
-                            self.display_info(info_dict)
+                    info_dict = self.get_data(place if place else "Paris")
+
+                st.markdown("### 🌡️ Today's Weather")
+                self.display_info(info_dict)
 
             except Exception as e:
-                st.write(f"""⚠️ ``Something were wrong !! Can't display the day weather info ! ``\n
-                         {e}""")
+                st.warning("⚠️ Weather data currently unavailable")
 
 if __name__ == "__main__":
-    dashboard = WeatherDashboard()
+    try:
+        api_client.health_check()
+    except requests.exceptions.RequestException:
+        st.error("🔌 Unable to connect to API.")
+        st.stop()
+
+    dashboard = SolarEnergyDashboard()
     dashboard.introduction_page()
