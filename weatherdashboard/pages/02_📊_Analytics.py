@@ -42,7 +42,7 @@ st.markdown("### 🎯 Configure Your Analysis")
 cols = st.columns([1, 3])
 
 with cols[0]:
-    config_container = st.container(border=True)
+    config_container = st.container(border=True, height=280)
     with config_container:
         st.markdown("**Geographic Level**")
         level_choice = st.pills(
@@ -71,10 +71,23 @@ with cols[0]:
 with cols[1]:
     map_container = st.container(border=True)
 
-
+kpi_cols = st.columns(3)
 choices = [level_choice, horizon, ranking_choice]
 
 if any(c is None for c in choices):
+    with kpi_cols[0]:
+        kpi_container_1 = st.container(border=True, height=150)
+        with kpi_container_1:
+            st.metric("📊 Departments", "96", delta="All tracked")
+    with kpi_cols[1]:
+        kpi_container_2 = st.container(border=True, height=150)
+        with kpi_container_2:
+            st.metric("🗺️ Regions", "12", delta="Metropolitan France")
+    with kpi_cols[2]:
+        kpi_container_3 = st.container(border=True, height=150)
+        with kpi_container_3:
+            st.metric("📈 Metrics", "7", delta="Weather indicators")
+
     st.info("📋 Please select all filter options to display analytics", icon="ℹ️")
     st.stop()
 
@@ -145,13 +158,18 @@ for i, col in enumerate(columns):
             kcols = st.columns(3)
             rank_medals = ["🥇", "🥈", "🥉"]
             for k, row in enumerate(df_sorted.itertuples()):
-                delta_text = f"{arrow_icon} {rank_medals[k]}"
-                kcols[k].metric(
-                    label=row[1],
-                    value=f"{row[2]:.1f}",
-                    delta=delta_text,
-                    delta_color=delta_color
-                )
+                rank_medal = rank_medals[k]
+                arrow_symbol = "📈" if top else "📉"
+
+                with kcols[k]:
+                    html_content = f"""
+                    <div style="text-align: center; padding: 15px; background-color: {'rgba(39, 174, 96, 0.1)' if top else 'rgba(231, 76, 60, 0.1)'}; border-radius: 8px;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">{row[1]}</div>
+                        <div style="font-size: 28px; font-weight: bold; color: {'#27ae60' if top else '#e74c3c'}; margin-bottom: 5px;">{row[2]:.1f}</div>
+                        <div style="font-size: 20px;">{arrow_symbol} {rank_medal}</div>
+                    </div>
+                    """
+                    st.markdown(html_content, unsafe_allow_html=True)
 
 st.markdown("---")
 st.markdown("### 📋 Full Dataset")
