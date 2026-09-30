@@ -105,7 +105,7 @@ with map_container:
     )
     figs = fig(date=date)
     if level == "region":
-        folium_static(figs["m_region_map"], width="stretch")
+        folium_static(figs["m_region_map"], width=1200, height=600)
     else:
         folium_static(figs["m_department_map"], width=1200, height=600)
 
