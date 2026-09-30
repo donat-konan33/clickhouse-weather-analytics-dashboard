@@ -1,95 +1,94 @@
 import streamlit as st
-# autres imports
-from streamlit_folium import folium_static, st_folium
+from streamlit_folium import folium_static
 from functions.queries import WeatherQueries
 from views.dash_weather_kpi import fig, kpi
 import pandas as pd
-from folium import Figure
 
-st.empty()
+st.set_page_config(page_title="Weather Analytics", layout="wide", page_icon="📊")
+
 st.markdown("""
-# :material/query_stats: Analytics Stats
+<style>
+.analytics-title {
+    font-size: 40px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+</style>
+<p class="analytics-title">📊 Weather Analytics Dashboard</p>
+""", unsafe_allow_html=True)
 
-Aide KPI pour la synthèse des données météorologiques.
-"""
-)
-
+st.markdown("Analyze weather patterns and key metrics across French departments and regions")
 
 horizon_map = {
-"Aujourd'hui": "today",
-"3 prochains jours": "next3days",
+    "Today": "today",
+    "Next 3 Days": "next3days",
 }
 
 level_map = {
-    "Département": "department",
-    "Région": "region"
+    "Department": "department",
+    "Region": "region"
 }
 top_or_bottom_map = {
     "Top": True,
     "Bottom": False
 }
 
+st.markdown("---")
+st.markdown("### 🎯 Configure Your Analysis")
+
 cols = st.columns([1, 3])
-## container
-bottom_left_cell = cols[0].container(
-    border=True, height=230
-)
 
-right_cell = cols[1].container(
-    border=True,
-)
+with cols[0]:
+    config_container = st.container(border=True)
+    with config_container:
+        st.markdown("**Geographic Level**")
+        level_choice = st.pills(
+            "Select geographic level",
+            options=list(level_map.keys()),
+            default="Department",
+            label_visibility="collapsed"
+        )
 
-with bottom_left_cell:
-    # Buttons for picking the geographical level for relevant stats
-    level_choice = st.pills(
-        "Niveau géographique",
-        options=list(level_map.keys()),
-        default="Département",
-    )
-    # Buttons for picking the ranking type
-    ranking_choice = st.pills(
-        "Type de classement",
-        options=list(top_or_bottom_map.keys()),
-        default="Top",
-    )
+        st.markdown("**Ranking Type**")
+        ranking_choice = st.pills(
+            "Ranking type",
+            options=list(top_or_bottom_map.keys()),
+            default="Top",
+            label_visibility="collapsed"
+        )
 
-    # Buttons for picking time horizon
-    horizon = st.pills(
-        "Périodes d'étude",
-        options=list(horizon_map.keys()),
-        default="Aujourd'hui",
-    )
+        st.markdown("**Time Period**")
+        horizon = st.pills(
+            "Time period",
+            options=list(horizon_map.keys()),
+            default="Today",
+            label_visibility="collapsed"
+        )
 
-top_right_cell = cols[0].container(
-    border=True, height=100
-)
+with cols[1]:
+    map_container = st.container(border=True)
 
-
-NUM_COLS = 4
-cols = st.columns(NUM_COLS)
-
-def top3(data: pd.DataFrame, metric: str):
-    return data[metric].sort_values(ascending=False).head(3)
-
-def bottom3(data: pd.DataFrame, metric: str):
-    return data[metric].sort_values(ascending=True).head(3)
 
 choices = [level_choice, horizon, ranking_choice]
 
 if any(c is None for c in choices):
-    bottom_left_cell.info("Veuillez sélectionner tous les critères.", icon=":material/info:")
+    st.info("📋 Please select all filter options to display analytics", icon="ℹ️")
     st.stop()
-
 
 level = level_map[level_choice]
 period = horizon_map[horizon]
 top = top_or_bottom_map[ranking_choice]
 
-with right_cell:
+with map_container:
+    st.markdown("**🗺️ Geographic Distribution**")
     date = st.selectbox(
-    "Sélectionnez la date de visualisation",
-    WeatherQueries().get_date(),
-    key="date_selectbox"
+        "Select visualization date",
+        WeatherQueries().get_date(),
+        key="date_selectbox",
+        label_visibility="collapsed"
     )
     figs = fig(date=date)
     if level == "region":
@@ -103,35 +102,37 @@ column_0 = data.columns[0]
 
 columns = data.iloc[:, 1:].columns.tolist()
 
+st.markdown("---")
 
 if top:
-    st.markdown(f"""#### 🏆 Top 3 {level}s pour {horizon}""")
-    st.write(f"Affichage des 3 {level}s avec les meilleures valeurs pour chaque métrique.")
+    st.markdown(f"""### 🏆 Top 3 {level.capitalize()}s - {horizon}""")
+    st.markdown(f"Showing the 3 best-performing {level.lower()}s for each weather metric")
 else:
-    st.markdown(f"""#### 🔻 Bottom 3 {level}s pour {horizon}""")
-    st.write(f"Affichage des 3 {level}s avec les plus basses valeurs pour chaque métrique.")
+    st.markdown(f"""### 🔻 Bottom 3 {level.capitalize()}s - {horizon}""")
+    st.markdown(f"Showing the 3 lowest-performing {level.lower()}s for each weather metric")
 
 NUM_COLS = 4
 metric_cols = st.columns(NUM_COLS)
+
 for i, col in enumerate(columns):
     with metric_cols[i % NUM_COLS]:
         cell = st.container(border=True)
 
         with cell:
             if col == "temperature":
-                st.subheader("🌡️ Température °C")
+                st.subheader("🌡️ Temperature (°C)")
             elif col == "humidity":
-                st.subheader("💧 Humidité %")
+                st.subheader("💧 Humidity (%)")
             elif col == "solarenergy":
-                st.subheader("🌞 Énergie Solaire kWh/m²")
+                st.subheader("🌞 Solar Energy (kWh/m²)")
             elif col == "windspeed":
-                st.subheader("💨 Vitesse du Vent km/h")
+                st.subheader("💨 Wind Speed (km/h)")
             elif col == "pressure":
-                st.subheader("� Pression atmosphérique mb")
+                st.subheader("🎚️ Pressure (mb)")
             elif col == "cloudcover":
-                st.subheader("☁️ Couverture Nuageuse %")
+                st.subheader("☁️ Cloud Cover (%)")
             elif col == "solarradiation":
-                st.subheader("🔆 Radiation Solaire W/m²")
+                st.subheader("🔆 Solar Radiation (W/m²)")
 
             df_sorted = data[[column_0, col]].sort_values(
                 by=col,
@@ -141,11 +142,12 @@ for i, col in enumerate(columns):
             kcols = st.columns(3)
             for k, row in enumerate(df_sorted.itertuples()):
                 kcols[k].metric(
-                    label=row[1],       # name / department
-                    value=row[2],
+                    label=row[1],
+                    value=f"{row[2]:.1f}",
                     delta=f"{delta_label} #{k+1}",
                     delta_color="off"
                 )
-st.markdown(f"---")
-st.markdown(f"### Raw Data")
-data
+
+st.markdown("---")
+st.markdown("### 📋 Full Dataset")
+st.dataframe(data, use_container_width=True)
