@@ -69,7 +69,7 @@ with cols[0]:
         )
 
 with cols[1]:
-    map_container = st.container(border=True)
+    map_container = st.container(border=True, height=750)
 
 kpi_cols = st.columns(3)
 choices = [level_choice, horizon, ranking_choice]
@@ -103,11 +103,14 @@ with map_container:
         key="date_selectbox",
         label_visibility="collapsed"
     )
-    figs = fig(date=date)
-    if level == "region":
-        folium_static(figs["m_region_map"], width=1200, height=600)
-    else:
-        folium_static(figs["m_department_map"], width=1200, height=600)
+    try:
+        figs = fig(date=date)
+        if level == "region":
+            folium_static(figs["m_region_map"], width=1200, height=650)
+        else:
+            folium_static(figs["m_department_map"], width=1200, height=650)
+    except Exception as e:
+        st.error(f"Error loading map: {str(e)}")
 
 data = kpi(level=level, period=period, top=top)
 column_0 = data.columns[0]
