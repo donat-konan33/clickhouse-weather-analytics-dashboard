@@ -4,7 +4,7 @@ Provides insights into solar radiation and energy distribution across France
 """
 
 import streamlit as st
-st.set_page_config(page_title="Solar Energy Dashboard",
+st.set_page_config(page_title="Solar Energy",
                  layout="wide",
                  page_icon="☀️")
 
@@ -202,7 +202,7 @@ if __name__ == "__main__":
         background-clip: text;
     }
     </style>
-    <p class="solar-title">☀️ Solar Energy Forecast</p>
+    <p class="solar-title">☀️ Solar Energy</p>
     """, unsafe_allow_html=True)
 
     st.markdown("Analyze solar radiation patterns and energy distribution across France")
@@ -246,12 +246,9 @@ if __name__ == "__main__":
 
         if st.checkbox("📋 Show Region Data Table", key="region_table"):
             if data_visualizations.geo_data is not None:
-                region_data = data_visualizations.geo_data.groupby('reg_name').agg({
-                    'solarenergy_kwhpm2': 'mean',
-                    'department': 'count'
-                }).reset_index()
-                region_data.columns = ['Region', 'Avg Solar Energy (kWh/m²)', 'Departments']
-                region_data = region_data.sort_values('Avg Solar Energy (kWh/m²)', ascending=False)
+                region_data = data_visualizations.geo_data.drop_duplicates(subset=['reg_name']).copy()
+                region_data = region_data[['reg_name', 'avg_solarenergy_kwhpm2']].sort_values('avg_solarenergy_kwhpm2', ascending=False)
+                region_data.columns = ['Region', 'Solar Energy (kWh/m²)']
                 st.dataframe(region_data, use_container_width=True, height=400)
 
     st.markdown("---")
