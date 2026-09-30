@@ -82,14 +82,14 @@ class EnergyConsumptionAdvisor:
 
                 if energy_data and len(energy_data) > 0:
                     available_energy = energy_data[0]['real_production_kwhpday']
-                    solar_radiation = energy_data[0]['solarradiation']
                     energy_density = energy_data[0]['solarenergy_kwhpm2']
+                    available_capacity = energy_data[0].get('available_solarenergy_kwhc', 0)
 
                     with st.container(border=True):
                         st.metric("📍 Department", energy_data[0]["department"])
                         st.metric("☀️ Available Energy (kWh/day)", f"{round(available_energy, 2)}")
-                        st.metric("🔆 Solar Radiation (W/m²)", f"{round(solar_radiation, 2)}")
                         st.metric("💡 Energy Density (kWh/m²)", f"{round(energy_density, 2)}")
+                        st.metric("⚡ Peak Capacity (kWh)", f"{round(available_capacity, 2)}")
                 else:
                     st.error("No energy data available for this department")
                     return
