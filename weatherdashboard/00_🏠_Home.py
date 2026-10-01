@@ -1,14 +1,15 @@
 import requests
 import streamlit as st
+import numpy as np
 st.set_page_config(page_title="Solar Energy Dashboard",
                  layout="wide",
                  page_icon="☀️")
 import sys
 sys.path.append("/app")
+
 from functions.queries import WeatherQueries
 from functions.state import WeatherState
 from functions.constants import WeatherConstants
-import numpy as np
 from functions.api_client import APIClient
 
 API_URL = st.secrets.get("api").get("BASE_URL", "http://localhost:8005")

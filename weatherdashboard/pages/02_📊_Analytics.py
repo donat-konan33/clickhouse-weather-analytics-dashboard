@@ -1,10 +1,15 @@
 import streamlit as st
 from streamlit_folium import folium_static
-from functions.queries import WeatherQueries
-from views.dash_weather_kpi import fig, kpi
 import pandas as pd
 
+import sys
+sys.path.append("/app")
+from functions.queries import WeatherQueries
+from views.dash_weather_kpi import fig, kpi
+
+
 st.set_page_config(page_title="Weather Analytics", layout="wide", page_icon="📊")
+
 
 st.markdown("""
 <style>

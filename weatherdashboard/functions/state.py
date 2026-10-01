@@ -1,7 +1,13 @@
 import streamlit as st
-from weatherdashboard.functions.queries import WeatherQueries
+from .queries import WeatherQueries
 import pandas as pd
 import re
+from .api_client import APIClient
+
+API_URL = st.secrets.get("api").get("BASE_URL")
+API_KEY = st.secrets.get("api").get("API_KEY")
+
+api_client = APIClient(base_url=API_URL, api_key=API_KEY)
 
 class WeatherState:
     def __init__(self) -> None:
@@ -57,10 +63,8 @@ class WeatherState:
         try:
             key = self.generate_unique_key(weatherquery_method_to_call, *args)
             if key in st.session_state:
-                st.info("Retrieving data from state...")
                 return self.get_data_from_state(key)
             else:
-                st.info("Retrieving data from API...")
                 results = getattr(self.queries, weatherquery_method_to_call)(*args) # dynamic method call
                 if results is not None:
                     self.store_in_state(key, results)
@@ -71,3 +75,5 @@ class WeatherState:
         except Exception as e:
             st.error(f"An error occurred while executing the query: {e}")
             return pd.DataFrame()
+        finally:
+            print(getattr(self.queries, weatherquery_method_to_call)(*args))

@@ -4,6 +4,9 @@ st.set_page_config(page_title="Weather Forecasting",
                  layout="wide",
                  page_icon="🔮")
 
+import sys
+sys.path.append("/app")
+
 st.markdown("# 🔮 Time Series Forecasting")
 
 st.info(

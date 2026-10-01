@@ -1,22 +1,29 @@
-import streamlit as st
+import os
 import pandas as pd
 import requests
+import streamlit as st
 from streamlit_js_eval import streamlit_js_eval
-from weatherdashboard.functions.constants import WeatherConstants
-import os
 
-BASE_URL = os.environ.get("BASE_URL") # CHANGE FOR TEST WEBHOOK URL again
+from .constants import WeatherConstants
+from .api_client import APIClient
+
+API_URL = st.secrets.get("api").get("BASE_URL")
+API_KEY = st.secrets.get("api").get("API_KEY")
+
+api_client = APIClient(base_url=API_URL, api_key=API_KEY)
 
 class WeatherQueries:
     def __init__(self) -> None:
+        self.api_client = api_client
         self.datasets = WeatherConstants.dataset()
+        self.features = WeatherConstants.features()
 
     def get_data(self) -> pd.DataFrame:
         """
         Get a table from the mart dataset
         """
         endpoint = "/get_data"
-        result_table = requests.get(BASE_URL + endpoint).json()
+        result_table = self.api_client.get(endpoint)
         return pd.DataFrame(result_table)
 
     def get_temp_data(self, department) -> pd.DataFrame:
@@ -25,9 +32,8 @@ class WeatherQueries:
         """
         endpoint = "/get_temp_data"
         params = {"department": department}
-        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        result_table = self.api_client.get(endpoint, params=params)
         return pd.DataFrame(result_table)
-
 
     def get_solarenergy_geo_data_data(self, date) -> pd.DataFrame:
         """
@@ -35,17 +41,15 @@ class WeatherQueries:
         """
         endpoint = "/solar_geo_data"
         params = {"date": date}
-        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        result_table = self.api_client.get(endpoint, params=params)
         return pd.DataFrame(result_table)
-
 
     def get_date(self):
         """
         To get studied date window
         """
         endpoint = "/date"
-        return requests.get(BASE_URL + endpoint).json()
-
+        return self.api_client.get(endpoint)
 
     def get_tfptwgp(self, department):
         """
@@ -53,8 +57,8 @@ class WeatherQueries:
         Temperature, Feels like, Pecipitation, Wind, Gust and Pressure
         """
         endpoint = "/common_features"
-        params = {"department" : department}
-        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        params = {"department": department}
+        result_table = self.api_client.get(endpoint, params=params)
         return pd.DataFrame(result_table)
 
     def get_sunshine_data(self):
@@ -63,7 +67,7 @@ class WeatherQueries:
         Temperature, Feels like, Pecipitation, Wind, Gust and Pressure
         """
         endpoint = "/get_sunshine_data"
-        result_table = requests.get(BASE_URL + endpoint).json()
+        result_table = self.api_client.get(endpoint)
         return pd.DataFrame(result_table)
 
     def get_region_sunshine_data(self, region):
@@ -72,7 +76,7 @@ class WeatherQueries:
         """
         endpoint = "/get_region_sunshine_data"
         params = {"region": region}
-        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        result_table = self.api_client.get(endpoint, params=params)
         return pd.DataFrame(result_table)
 
     def get_solarenergy_agg_pday(self, department):
@@ -83,14 +87,17 @@ class WeatherQueries:
         """
         endpoint = "/get_solarenergy_agg_pday"
         params = {"department": department}
-        return requests.get(BASE_URL + endpoint, params=params).json()
+        return self.api_client.get(endpoint, params=params)
 
     def get_location(self):
         """
         Automatically Get User LOcation
         """
         try:
-            user_location = streamlit_js_eval(js_expressions="navigator.geolocation.getCurrentPosition((pos) => pos.coords)", key="geo_position")
+            user_location = streamlit_js_eval(
+                js_expressions="navigator.geolocation.getCurrentPosition((pos) => pos.coords)",
+                key="geo_position",
+            )
             st.write(user_location)
             if user_location:
                 latitude = user_location["latitude"]
@@ -98,27 +105,29 @@ class WeatherQueries:
                 st.write(f"lon={longitude}&lat={latitude}")
                 # search now the department
                 url = f"https://api-adresse.data.gouv.fr/reverse/?lon={longitude}&lat={latitude}"
-                response = requests.get(url).json()
+                response = self.api_client.get(url)
 
                 if response.get("features"):
-                    department = response["features"][0]["properties"]["context"].split(", ")[1]
+                    department = response["features"][0]["properties"]["context"].split(
+                        ", "
+                    )[1]
                     st.write(f"📍 You are currently in **{department}** department")
                     return department
 
                 else:
                     st.error("Can't get department.")
-                    st.warning("Can't get your location. Please accept geolocation to continue.")
+                    st.warning(
+                        "Can't get your location. Please accept geolocation to continue."
+                    )
         except Exception as e:
             st.error(f"Error when retrieving location : {e}")
-
 
     def get_entire_department_data(self, department) -> pd.DataFrame:
         """Get local entire data for a department"""
         endpoint = "/get_entire_department_data"
         params = {"department": department}
-        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        result_table = self.api_client.get(endpoint, params=params)
         return pd.DataFrame(result_table)
-
 
     def get_entire_region_data(self, region):
         """
@@ -126,7 +135,7 @@ class WeatherQueries:
         """
         endpoint = "/get_entire_region_data"
         params = {"region": region}
-        result_table = requests.get(BASE_URL + endpoint, params=params).json()
+        result_table = self.api_client.get(endpoint, params=params)
         return pd.DataFrame(result_table)
 
     def get_entire_data(self):
@@ -135,8 +144,32 @@ class WeatherQueries:
         Model development for forecasting
         """
         endpoint = "/get_ml_data"
-        result_table = requests.get(BASE_URL + endpoint).json()
+        result_table = self.api_client.get(endpoint)
         return pd.DataFrame(result_table)
+
+    def get_analytics_stats(self, level="department", period="today", top=True):
+        """
+        Get some analytics stats
+        """
+        endpoint = "/analytics/stats"
+        params = {
+            "level": level,
+            "period": period,
+            "top": top
+        }
+        return self.api_client.get(endpoint, params=params)
+
+    def get_region_temp_min_max():
+        return
+
+    def get_region_shine_min_max():
+        return
+
+    def get_dept_temp_min_max():
+        return
+
+    def get_dept_shine_min_max():
+        return
 
 
 if __name__ == "__main__":
