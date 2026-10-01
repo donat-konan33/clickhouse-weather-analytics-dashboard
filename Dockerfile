@@ -1,4 +1,4 @@
-FROM python:3.9.20-slim
+FROM python:3.12-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -21,4 +21,4 @@ RUN apt-get update \
 EXPOSE $PORT
 
 ENTRYPOINT [ "poetry", "run" ]
-CMD ["sh", "-c", "streamlit run weatherdashboard/00_dashboard_introduction.py --server.port=$PORT --server.address=0.0.0.0"]
+CMD ["sh", "-c", "streamlit run weatherdashboard/00_🏠_Home.py --server.port=$PORT --server.address=0.0.0.0"]

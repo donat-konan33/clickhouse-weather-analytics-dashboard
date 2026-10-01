@@ -8,9 +8,8 @@ package-mode = false
 
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.9.7 || >3.9.7,<3.13"
+python = ">=3.12,<3.13"
 streamlit = "1.40.0"
-altair = "4.2.2"
 pandas = "2.2.0"
 protobuf = "==3.20.*"
 db-dtypes = "^1.4.1"
@@ -24,7 +23,7 @@ streamlit-js-eval = "^0.1.7"
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
 ydata-profiling = "^4.16.1"
-numba = "0.58.1"
+numba = "^0.61.0"
 ipywidgets = "^8.1.5"
 skforecast = "^0.12.1"
 
@@ -32,6 +31,10 @@ skforecast = "^0.12.1"
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
 ipython = "8.12.1"
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
+
 
 [build-system]
 requires = ["poetry-core"]
