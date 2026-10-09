@@ -92,8 +92,18 @@ if __name__ == "__main__":
 
     st.write("# ⛅Weather Data Visualizations")
     data_visualization = DescriptiveStatistic()
-    department = WeatherConstants.department()
-    dep_option = st.selectbox("Select a department", department)
+    departments = WeatherConstants.department()
+    location_department = WeatherQueries().get_location()
+    data_visualization.state.apply_location_default(
+        location_department,
+        departments,
+        "weather_statistics_department",
+    )
+    dep_option = st.selectbox(
+        "Select a department",
+        departments,
+        key="weather_statistics_department",
+    )
     if dep_option:
         data_visualization.temperature(dep_option)
         data_visualization.wind_gust_pressure_precip_trend(dep_option)

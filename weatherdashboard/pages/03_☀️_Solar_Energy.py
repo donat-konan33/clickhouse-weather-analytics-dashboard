@@ -127,7 +127,7 @@ class SolarTrend:
         }
 
         num_colors = 30
-        cmap = cm.get_cmap('RdYlGn', num_colors)
+        cmap = cm.get_cmap('YlOrRd', num_colors)
         colors = [mcolors.to_hex(cmap(i)) for i in range(num_colors)]
 
         avg_values = [f.get("properties", {}).get("avg_solarenergy_kwhpm2", 0)
@@ -178,16 +178,6 @@ class SolarTrend:
                        labels={"solarenergy_kwhpm2": "Solar Energy (kWh/m²)", "reg_name": "Region"},
                        title="Solar Energy Distribution by Region")
         st.plotly_chart(fig, use_container_width=True)
-
-    def france_aggregated_data(self):
-        """Display aggregated solar data for entire France"""
-        try:
-            data = self.state.get_query_result("get_entire_data")
-            st.dataframe(data, use_container_width=True)
-            return data
-        except Exception as e:
-            st.error(f"Unable to load aggregated France data: {e}")
-            return None
 
 
 if __name__ == "__main__":
@@ -260,7 +250,3 @@ if __name__ == "__main__":
     st.markdown("---")
     st.subheader("🗺️ Solar Energy by Region (All Dates)")
     data_visualizations.solar_energy_distribution_by_region()
-
-    st.markdown("---")
-    st.subheader("🇫🇷 Complete Dataset - All of France")
-    data_visualizations.france_aggregated_data()

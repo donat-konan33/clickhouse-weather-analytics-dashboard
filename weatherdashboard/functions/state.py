@@ -2,12 +2,6 @@ import streamlit as st
 from .queries import WeatherQueries
 import pandas as pd
 import re
-from .api_client import APIClient
-
-API_URL = st.secrets.get("api").get("BASE_URL")
-API_KEY = st.secrets.get("api").get("API_KEY")
-
-api_client = APIClient(base_url=API_URL, api_key=API_KEY)
 
 class WeatherState:
     def __init__(self) -> None:
@@ -50,6 +44,21 @@ class WeatherState:
         if key not in st.session_state:
             self.store_in_state(key, None)
         return st.session_state[key]
+
+    def apply_location_default(self, detected_department, departments, widget_key):
+        """Set a department widget's initial value from location without overriding a choice."""
+        initialized_key = f"{widget_key}_location_default_applied"
+        if (
+            detected_department not in departments
+            or st.session_state.get(initialized_key, False)
+        ):
+            return
+
+        current_department = st.session_state.get(widget_key)
+        if current_department is None or current_department == departments[0]:
+            st.session_state[widget_key] = detected_department
+
+        st.session_state[initialized_key] = True
 
     def get_query_result(self, weatherquery_method_to_call: str, *args):
         """Get query result from state or the API. Store in state if new

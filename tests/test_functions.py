@@ -2,6 +2,8 @@ import pytest
 import requests
 
 from weatherdashboard.functions.api_client import APIClient
+from weatherdashboard.functions.queries import WeatherQueries
+from weatherdashboard.functions.state import WeatherState
 
 
 def test_health_check_returns_true_when_api_is_available(mocker):
@@ -78,3 +80,108 @@ def test_get_raises_runtime_error_for_http_error(mocker):
 
     with pytest.raises(RuntimeError, match="403 - Forbidden"):
         client.get("/weather")
+
+
+def test_get_location_returns_department_from_geolocation(mocker):
+    mocker.patch("weatherdashboard.functions.queries.st.write")
+    mocker.patch("weatherdashboard.functions.queries.st.warning")
+    mocker.patch("weatherdashboard.functions.queries.st.error")
+    mock_geolocation = mocker.patch(
+        "weatherdashboard.functions.queries.streamlit_js_eval",
+        return_value={
+            "value": {"latitude": 48.8566, "longitude": 2.3522},
+            "dataType": "json",
+        },
+    )
+
+    reverse_response = mocker.Mock()
+    reverse_response.raise_for_status.return_value = None
+    reverse_response.json.return_value = {
+        "features": [
+            {
+                "properties": {
+                    "context": "75, Paris, Île-de-France",
+                }
+            }
+        ]
+    }
+    mock_get = mocker.patch(
+        "weatherdashboard.functions.queries.requests.get",
+        return_value=reverse_response,
+    )
+
+    department = WeatherQueries().get_location()
+
+    assert department == "Paris"
+    geolocation_expression = mock_geolocation.call_args.kwargs["js_expressions"]
+    assert "new Promise" in geolocation_expression
+    assert "getCurrentPosition" in geolocation_expression
+    assert "(error) => resolve({error: error.message})" in geolocation_expression
+    mock_get.assert_called_once_with(
+        "https://api-adresse.data.gouv.fr/reverse/",
+        params={"lon": 2.3522, "lat": 48.8566},
+        timeout=10,
+    )
+
+
+def test_get_location_reports_geolocation_denial_without_reverse_lookup(mocker):
+    mock_warning = mocker.patch("weatherdashboard.functions.queries.st.warning")
+    mocker.patch(
+        "weatherdashboard.functions.queries.streamlit_js_eval",
+        return_value={
+            "value": {"error": "User denied Geolocation"},
+            "dataType": "json",
+        },
+    )
+    mock_get = mocker.patch("weatherdashboard.functions.queries.requests.get")
+
+    assert WeatherQueries().get_location() is None
+
+    mock_warning.assert_called_once_with(
+        "Can't get your location: User denied Geolocation. "
+        "Please allow location access to continue."
+    )
+    mock_get.assert_not_called()
+
+
+def test_reverse_geocode_extracts_department_not_city():
+    payload = {
+        "features": [
+            {
+                "properties": {
+                    "context": "69003, Lyon 3e Arrondissement, Rhône, "
+                    "Auvergne-Rhône-Alpes",
+                }
+            }
+        ]
+    }
+
+    assert WeatherQueries._extract_department_from_reverse_geocode(payload) == "Rhône"
+
+
+def test_location_department_becomes_selectbox_default(mocker):
+    session_state = {}
+    mocker.patch("weatherdashboard.functions.state.st.session_state", session_state)
+    state = WeatherState()
+
+    state.apply_location_default(
+        "Rhône",
+        ["Ain", "Rhône", "Paris"],
+        "weather_statistics_department",
+    )
+
+    assert session_state["weather_statistics_department"] == "Rhône"
+
+
+def test_location_default_does_not_override_user_department(mocker):
+    session_state = {"home_energy_department": "Paris"}
+    mocker.patch("weatherdashboard.functions.state.st.session_state", session_state)
+    state = WeatherState()
+
+    state.apply_location_default(
+        "Rhône",
+        ["Ain", "Rhône", "Paris"],
+        "home_energy_department",
+    )
+
+    assert session_state["home_energy_department"] == "Paris"

@@ -92,34 +92,41 @@ class EnergyConsumptionAdvisor:
 
         with col1:
             st.markdown("#### 🌍 Department Selection")
+            departments = self.constants.department()
+            self.state.apply_location_default(
+                self.queries.get_location(),
+                departments,
+                "home_energy_department",
+            )
             selected_dept = st.selectbox(
                 "Select your department",
-                self.constants.department(),
+                departments,
+                key="home_energy_department",
                 help="Choose your location to get local solar energy data"
             )
             panel_area_m2 = st.number_input(
-                "Surface totale des panneaux photovoltaïques (m²)",
+                "Total solar panel area (m²)",
                 min_value=0.1,
                 max_value=100.0,
                 value=self.queries.REFERENCE_PANEL_AREA_M2,
                 step=0.1,
-                help="Surface totale de vos panneaux. La valeur de référence utilisée par l’API est 2,7 m².",
+                help="Total area of your solar panels. The API reference value is 2.7 m².",
             )
             panel_efficiency_percent = st.number_input(
-                "Rendement du module (%)",
+                "Module efficiency (%)",
                 min_value=1.0,
                 max_value=100.0,
                 value=self.queries.REFERENCE_PANEL_EFFICIENCY_PERCENT,
                 step=0.1,
                 help=(
-                    "Le rendement maximal du module Trina Vertex TSM-DE19R est "
-                    "de 21,7 % (fiche technique 2023). Modifiez-le selon votre module."
+                    "The Trina Vertex TSM-DE19R module has a maximum efficiency of "
+                    "21.7% (2023 datasheet). Adjust this value to match your module."
                 ),
             )
             st.caption(
-                "La fiche technique Trina citée indique un rendement maximal de 21,7 % "
-                "pour le module TSM-DE19R. L’estimation de l’API utilise 2,7 m² et "
-                "21,7 % ; vous pouvez modifier ces deux paramètres."
+                "The cited Trina datasheet lists a maximum efficiency of 21.7% "
+                "for the TSM-DE19R module. The API estimate uses 2.7 m² and 21.7%; "
+                "you can adjust both values."
             )
 
             try:
