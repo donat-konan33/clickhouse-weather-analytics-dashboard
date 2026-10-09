@@ -119,8 +119,8 @@ class WeatherConstants:
             "Haute-Savoie",
             "Allier",
             "Cantal",
-            "Corse",
-            #'Mayotte',  'Guyane-France', 'Martinique-France', 'Guadeloupe-France',
+            "Haute-Corse",
+            "Corse-du-Sud",
         ]
 
     @staticmethod

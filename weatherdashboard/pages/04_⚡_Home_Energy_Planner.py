@@ -41,6 +41,27 @@ class EnergyConsumptionAdvisor:
         appliance = self.APPLIANCES[appliance_name]
         return (appliance["power_w"] * appliance["daily_hours"]) / 1000
 
+    def scale_energy_for_panel_area(self, reference_energy_kwh, panel_area_m2):
+        """Adjust API estimates that use the reference panel area."""
+        return (
+            reference_energy_kwh
+            * panel_area_m2
+            / self.queries.REFERENCE_PANEL_AREA_M2
+        )
+
+    def scale_energy_for_panel_configuration(
+        self,
+        reference_energy_kwh,
+        panel_area_m2,
+        panel_efficiency_percent,
+    ):
+        """Adjust API production estimates to the entered area and efficiency."""
+        return (
+            self.scale_energy_for_panel_area(reference_energy_kwh, panel_area_m2)
+            * panel_efficiency_percent
+            / self.queries.REFERENCE_PANEL_EFFICIENCY_PERCENT
+        )
+
     def calculate_autonomy(self, available_energy_kwh, selected_appliances):
         """Calculate how many hours the selected appliances can run"""
         results = []
@@ -76,18 +97,54 @@ class EnergyConsumptionAdvisor:
                 self.constants.department(),
                 help="Choose your location to get local solar energy data"
             )
+            panel_area_m2 = st.number_input(
+                "Surface totale des panneaux photovoltaïques (m²)",
+                min_value=0.1,
+                max_value=100.0,
+                value=self.queries.REFERENCE_PANEL_AREA_M2,
+                step=0.1,
+                help="Surface totale de vos panneaux. La valeur de référence utilisée par l’API est 2,7 m².",
+            )
+            panel_efficiency_percent = st.number_input(
+                "Rendement du module (%)",
+                min_value=1.0,
+                max_value=100.0,
+                value=self.queries.REFERENCE_PANEL_EFFICIENCY_PERCENT,
+                step=0.1,
+                help=(
+                    "Le rendement maximal du module Trina Vertex TSM-DE19R est "
+                    "de 21,7 % (fiche technique 2023). Modifiez-le selon votre module."
+                ),
+            )
+            st.caption(
+                "La fiche technique Trina citée indique un rendement maximal de 21,7 % "
+                "pour le module TSM-DE19R. L’estimation de l’API utilise 2,7 m² et "
+                "21,7 % ; vous pouvez modifier ces deux paramètres."
+            )
 
             try:
                 energy_data = self.state.get_query_result("get_solarenergy_agg_pday", selected_dept)
 
                 if energy_data and len(energy_data) > 0:
-                    available_energy = energy_data[0]['real_production_kwhpday']
+                    reference_energy = energy_data[0]['real_production_kwhpday']
+                    available_energy = self.scale_energy_for_panel_configuration(
+                        reference_energy,
+                        panel_area_m2,
+                        panel_efficiency_percent,
+                    )
                     energy_density = energy_data[0]['solarenergy_kwhpm2']
-                    available_capacity = energy_data[0].get('available_solarenergy_kwhc', 0)
+                    reference_capacity = energy_data[0].get(
+                        'available_solarenergy_kwhc',
+                        0,
+                    )
+                    available_capacity = self.scale_energy_for_panel_area(
+                        reference_capacity,
+                        panel_area_m2,
+                    )
 
                     with st.container(border=True):
                         st.metric("📍 Department", energy_data[0]["department"])
-                        st.metric("☀️ Available Energy (kWh/day)", f"{round(available_energy, 2)}")
+                        st.metric("☀️ Estimated production (kWh/day)", f"{round(available_energy, 2)}")
                         st.metric("💡 Energy Density (kWh/m²)", f"{round(energy_density, 2)}")
                         st.metric("⚡ Peak Capacity (kWh)", f"{round(available_capacity, 2)}")
                 else:
