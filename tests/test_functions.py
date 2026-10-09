@@ -1,9 +1,29 @@
+import ast
+from pathlib import Path
+
 import pytest
 import requests
 
 from weatherdashboard.functions.api_client import APIClient
 from weatherdashboard.functions.queries import WeatherQueries
 from weatherdashboard.functions.state import WeatherState
+
+
+def test_application_uses_canonical_local_function_imports():
+    app_root = Path(__file__).resolve().parents[1] / "weatherdashboard"
+    legacy_imports = []
+
+    for source_file in app_root.rglob("*.py"):
+        syntax_tree = ast.parse(source_file.read_text(encoding="utf-8"))
+        for node in ast.walk(syntax_tree):
+            if (
+                isinstance(node, ast.ImportFrom)
+                and node.module
+                and (node.module == "functions" or node.module.startswith("functions."))
+            ):
+                legacy_imports.append(f"{source_file}:{node.lineno}: {node.module}")
+
+    assert legacy_imports == []
 
 
 def test_health_check_returns_true_when_api_is_available(mocker):
