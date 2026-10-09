@@ -13,6 +13,9 @@ API_KEY = st.secrets.get("api").get("API_KEY")
 api_client = APIClient(base_url=API_URL, api_key=API_KEY)
 
 class WeatherQueries:
+    REFERENCE_PANEL_AREA_M2 = 2.7
+    REFERENCE_PANEL_EFFICIENCY_PERCENT = 21.7
+
     def __init__(self) -> None:
         self.api_client = api_client
         self.datasets = WeatherConstants.dataset()
@@ -53,8 +56,8 @@ class WeatherQueries:
 
     def get_tfptwgp(self, department):
         """
-        Get some interesting features like tfptwgp as :
-        Temperature, Feels like, Pecipitation, Wind, Gust and Pressure
+        Get some interesting features named tfptwgp as :
+        Temperature, Feels like, Precipitation, Wind, Gust and Pressure
         """
         endpoint = "/common_features"
         params = {"department": department}
@@ -81,9 +84,8 @@ class WeatherQueries:
 
     def get_solarenergy_agg_pday(self, department):
         """
-        We take into account the calculation over 8 days as recorded
-        Panel area = 2.7 m²
-        Panel efficiency = 21.7%
+        Fetch solar production, calculated by the API for a reference panel
+        area of 2.7 m² and a maximum efficiency of 21.7%.
         """
         endpoint = "/get_solarenergy_agg_pday"
         params = {"department": department}

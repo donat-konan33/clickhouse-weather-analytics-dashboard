@@ -18,8 +18,22 @@ The screenshot links to a short application demo.
 | Weather statistics | Department-level temperature, feels-like, precipitation, wind, gust and pressure trends. |
 | Weather analytics | Department or region views, today or the next three days, top or bottom rankings, geographic maps and KPI summaries. |
 | Solar energy | Department and region maps, date-based solar-energy indicators, seven-day distribution charts and aggregated data. |
-| Home energy planner | Estimates appliance energy use and autonomy from the selected department's available solar-energy data. |
+| Home energy planner | Estimates appliance energy use and autonomy from the selected department's solar data, adjusted to the entered panel area and efficiency. |
 | Forecasting | Navigation page is present, but advanced forecasting models are marked as coming soon and are not currently implemented in the dashboard. |
+
+### Home energy planner reference assumptions
+
+The planner's API reference calculation uses a total panel area of **2.7 m²** and a module efficiency of **21.7%**:
+
+```text
+estimated daily production = average solar energy (kWh/m²/day)
+                             × panel area (m²)
+                             × module efficiency
+```
+
+The efficiency reference comes from the Trina Solar **Vertex TSM-DE19R** datasheet, which specifies a maximum module efficiency of 21.7% (for the 585 W version). The **2.7 m²** area is the fixed reference area used by the API calculation; it is an assumption, not a user-specific installation measurement. In the planner, users can change both the total panel area and module efficiency, and the production estimate is scaled from those reference values.
+
+Source: [Trina Solar Vertex TSM-DE19R datasheet (French, 2023)](https://static.trinasolar.com/sites/default/files/Datasheet_Vertex_DE19R_FR_2023%20C_web.pdf).
 
 ## Previous README and this update
 
@@ -121,10 +135,16 @@ tests/                         # Automated tests
 
 ## Tests
 
-Run the repository's configured test target with:
+Run the unit and mocked-backend integration tests locally with:
 
 ```bash
-make test_connection
+poetry run pytest -q
 ```
 
-The tests cover the REST API client's health check, authenticated requests and error handling using mocks. They do not constitute end-to-end tests of the Streamlit pages or REST API.
+The integration test starts a local fake REST API and checks the solar-energy request, authentication header and response shape without requiring API credentials or a network connection to the production backend.
+
+## CI/CD and Streamlit Community Cloud
+
+GitHub Actions runs unit tests and the mocked-backend integration test for pull requests targeting `master`, pushes to `master`, and manual runs. No production API secrets are needed in GitHub Actions.
+
+Yes, Streamlit Community Cloud deploys directly from GitHub: connect the app to this repository and choose its deployment branch, for example `master`. New commits on that branch trigger Streamlit Cloud to update the app; this workflow does not itself deploy to Streamlit Cloud. To make CI pass before deployment, protect the selected deployment branch in GitHub by requiring pull requests and the **CI / Tests** status check before merging. Avoid direct pushes that bypass branch protection.
