@@ -16,9 +16,9 @@ import matplotlib.colors as mcolors
 import plotly.express as px
 from branca.colormap import LinearColormap
 
-from functions.constants import WeatherConstants
-from functions.queries import WeatherQueries
-from functions.state import WeatherState
+from weatherdashboard.functions.constants import WeatherConstants
+from weatherdashboard.functions.queries import WeatherQueries
+from weatherdashboard.functions.state import WeatherState
 from typing import List
 
 class WeatherTrend:
