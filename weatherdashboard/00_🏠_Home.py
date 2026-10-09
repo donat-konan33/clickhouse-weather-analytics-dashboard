@@ -7,10 +7,10 @@ st.set_page_config(page_title="Solar Energy Dashboard",
 import sys
 sys.path.append("/app")
 
-from weatherdashboard.functions.queries import WeatherQueries
-from weatherdashboard.functions.state import WeatherState
-from weatherdashboard.functions.constants import WeatherConstants
-from weatherdashboard.functions.api_client import APIClient
+from functions.queries import WeatherQueries
+from functions.state import WeatherState
+from functions.constants import WeatherConstants
+from functions.api_client import APIClient
 
 API_URL = st.secrets.get("api").get("BASE_URL", "http://localhost:8005")
 API_KEY = st.secrets.get("api").get("API_KEY")

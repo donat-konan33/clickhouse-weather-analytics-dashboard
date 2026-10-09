@@ -14,9 +14,9 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-from weatherdashboard.functions.queries import WeatherQueries
-from weatherdashboard.functions.state import WeatherState
-from weatherdashboard.functions.constants import WeatherConstants
+from functions.queries import WeatherQueries
+from functions.state import WeatherState
+from functions.constants import WeatherConstants
 
 
 class EnergyConsumptionAdvisor:
