@@ -7,11 +7,6 @@ from streamlit_js_eval import streamlit_js_eval
 from .constants import WeatherConstants
 from .api_client import APIClient
 
-API_URL = st.secrets.get("api").get("BASE_URL")
-API_KEY = st.secrets.get("api").get("API_KEY")
-
-api_client = APIClient(base_url=API_URL, api_key=API_KEY)
-
 _GEOLOCATION_JS_EXPRESSION = """new Promise((resolve) => {
     if (!navigator.geolocation) {
         resolve({error: "Geolocation is not supported by this browser"});
@@ -34,9 +29,19 @@ class WeatherQueries:
     REFERENCE_PANEL_EFFICIENCY_PERCENT = 21.7
 
     def __init__(self) -> None:
-        self.api_client = api_client
+        self._api_client = None
         self.datasets = WeatherConstants.dataset()
         self.features = WeatherConstants.features()
+
+    @property
+    def api_client(self):
+        if self._api_client is None:
+            api_settings = st.secrets["api"]
+            self._api_client = APIClient(
+                base_url=api_settings["BASE_URL"],
+                api_key=api_settings["API_KEY"],
+            )
+        return self._api_client
 
     def get_data(self) -> pd.DataFrame:
         """

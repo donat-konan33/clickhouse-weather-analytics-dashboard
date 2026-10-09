@@ -2,12 +2,6 @@ import streamlit as st
 from .queries import WeatherQueries
 import pandas as pd
 import re
-from .api_client import APIClient
-
-API_URL = st.secrets.get("api").get("BASE_URL")
-API_KEY = st.secrets.get("api").get("API_KEY")
-
-api_client = APIClient(base_url=API_URL, api_key=API_KEY)
 
 class WeatherState:
     def __init__(self) -> None:
