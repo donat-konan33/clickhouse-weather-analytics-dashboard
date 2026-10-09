@@ -21,9 +21,9 @@ from branca.colormap import LinearColormap
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 
-from weatherdashboard.functions.queries import WeatherQueries
-from weatherdashboard.functions.state import WeatherState
-from weatherdashboard.functions.constants import WeatherConstants
+from functions.queries import WeatherQueries
+from functions.state import WeatherState
+from functions.constants import WeatherConstants
 
 
 class SolarTrend:

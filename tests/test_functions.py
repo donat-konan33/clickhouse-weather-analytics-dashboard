@@ -9,9 +9,9 @@ from weatherdashboard.functions.queries import WeatherQueries
 from weatherdashboard.functions.state import WeatherState
 
 
-def test_application_uses_canonical_local_function_imports():
+def test_application_uses_streamlit_script_root_function_imports():
     app_root = Path(__file__).resolve().parents[1] / "weatherdashboard"
-    legacy_imports = []
+    invalid_imports = []
 
     for source_file in app_root.rglob("*.py"):
         syntax_tree = ast.parse(source_file.read_text(encoding="utf-8"))
@@ -19,11 +19,11 @@ def test_application_uses_canonical_local_function_imports():
             if (
                 isinstance(node, ast.ImportFrom)
                 and node.module
-                and (node.module == "functions" or node.module.startswith("functions."))
+                and node.module.startswith("weatherdashboard.functions")
             ):
-                legacy_imports.append(f"{source_file}:{node.lineno}: {node.module}")
+                invalid_imports.append(f"{source_file}:{node.lineno}: {node.module}")
 
-    assert legacy_imports == []
+    assert invalid_imports == []
 
 
 def test_health_check_returns_true_when_api_is_available(mocker):

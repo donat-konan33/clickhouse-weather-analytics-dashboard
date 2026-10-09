@@ -4,7 +4,7 @@ import pandas as pd
 
 import sys
 sys.path.append("/app")
-from weatherdashboard.functions.queries import WeatherQueries
+from functions.queries import WeatherQueries
 from views.dash_weather_kpi import fig, kpi
 
 
