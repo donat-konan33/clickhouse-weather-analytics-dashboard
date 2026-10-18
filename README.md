@@ -18,12 +18,12 @@ The screenshot links to a short application demo.
 | Weather statistics | Department-level temperature, feels-like, precipitation, wind, gust and pressure trends. |
 | Weather analytics | Department or region views, today or the next three days, top or bottom rankings, geographic maps and KPI summaries. |
 | Solar energy | Department and region maps, date-based solar-energy indicators, seven-day distribution charts and aggregated data. |
-| Home energy planner | Estimates appliance energy use and autonomy from the selected department's solar data, adjusted to the entered panel area and efficiency. |
+| Home energy planner | Estimates appliance energy use and autonomy from the selected department's solar data, based on the selected panel count, area per panel and module efficiency. Recommends a panel count when daily production is insufficient. |
 | Forecasting | Navigation page is present, but advanced forecasting models are marked as coming soon and are not currently implemented in the dashboard. |
 
 ### Home energy planner reference assumptions
 
-The planner's API reference calculation uses a total panel area of **2.7 m²** and a module efficiency of **21.7%**:
+The planner's API reference calculation uses a panel area of **2.7 m²** and a module efficiency of **21.7%** per reference module:
 
 ```text
 estimated daily production = average solar energy (kWh/m²/day)
@@ -31,7 +31,7 @@ estimated daily production = average solar energy (kWh/m²/day)
                              × module efficiency
 ```
 
-The efficiency reference comes from the Trina Solar **Vertex TSM-DE19R** datasheet, which specifies a maximum module efficiency of 21.7% (for the 585 W version). The **2.7 m²** area is the fixed reference area used by the API calculation; it is an assumption, not a user-specific installation measurement. In the planner, users can change both the total panel area and module efficiency, and the production estimate is scaled from those reference values.
+The efficiency reference comes from the Trina Solar **Vertex TSM-DE19R** datasheet, which specifies a maximum module efficiency of 21.7% (for the 585 W version). The **2.7 m²** area is the reference module area used by the API calculation; it is an assumption, not a user-specific installation measurement. In the planner, users choose the number of panels, the area per panel and the module efficiency. Production is scaled from the API reference values, and an insufficient daily estimate includes the minimum panel count calculated for the selected appliances.
 
 Source: [Trina Solar Vertex TSM-DE19R datasheet (French, 2023)](https://static.trinasolar.com/sites/default/files/Datasheet_Vertex_DE19R_FR_2023%20C_web.pdf).
 
